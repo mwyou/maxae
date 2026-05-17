@@ -29,6 +29,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Configure D1 binding
+        run: |
+          node -e "const fs=require('fs'); const p='wrangler.toml'; const id=process.env.CLOUDFLARE_D1_DATABASE_ID; if(!id) throw new Error('Missing CLOUDFLARE_D1_DATABASE_ID'); fs.writeFileSync(p, fs.readFileSync(p,'utf8').replace('CLOUDFLARE_D1_DATABASE_ID_PLACEHOLDER', id));"
+        env:
+          CLOUDFLARE_D1_DATABASE_ID: ${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}
+
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
         with:
