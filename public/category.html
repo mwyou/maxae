@@ -280,6 +280,16 @@
         grid-row: span 3;
       }
 
+      .display-card:nth-child(6n) {
+        grid-column: span 2;
+        grid-row: span 3;
+      }
+
+      .display-card:nth-child(6n + 1):not(:first-child) {
+        grid-column: span 3;
+        grid-row: span 4;
+      }
+
       .display-card span {
         position: relative;
         z-index: 1;
@@ -306,6 +316,36 @@
         font-size: 14px;
         letter-spacing: 0.08em;
         line-height: 1.8;
+      }
+
+      .display-card .artwork-meta {
+        margin-top: 18px;
+        color: #d4d4d8;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        line-height: 1.8;
+        text-transform: uppercase;
+      }
+
+      .display-card .artwork-description {
+        max-width: 42rem;
+        color: #e4e4e7;
+        font-family:
+          'Noto Serif SC',
+          'Songti SC',
+          serif;
+        font-size: 14px;
+        letter-spacing: 0.06em;
+      }
+
+      .display-card.has-image strong {
+        text-shadow: 0 14px 36px rgb(0 0 0 / 0.62);
+      }
+
+      .display-card.has-image .artwork-meta,
+      .display-card.has-image .artwork-description {
+        color: #f4f4f5;
+        text-shadow: 0 10px 26px rgb(0 0 0 / 0.72);
       }
 
       .back-link {
@@ -391,7 +431,7 @@
 
       <section class="content-band">
         <div>
-          <div class="display-grid">
+          <div id="artworkGrid" class="display-grid">
             <div class="display-card" data-artwork-index="0">
               <span>01</span>
               <strong data-i18n="wall.0.title"></strong>
@@ -627,6 +667,14 @@
         return path.split('.').reduce((value, key) => value?.[key], common[lang])
       }
 
+      const escapeHtml = (value) =>
+        String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;')
+
       const getArtworkTitle = (artwork) => {
         if (!artwork) return ''
         return lang === 'zh'
@@ -634,23 +682,51 @@
           : artwork.title_en || artwork.title_zh || ''
       }
 
+      const getArtworkDescription = (artwork) => {
+        if (!artwork) return ''
+        return lang === 'zh'
+          ? artwork.description_zh || artwork.description_en || ''
+          : artwork.description_en || artwork.description_zh || ''
+      }
+
+      const getArtworkMeta = (artwork) => {
+        if (!artwork) return ''
+        const artist = lang === 'zh'
+          ? artwork.artist_zh || artwork.artist_en || ''
+          : artwork.artist_en || artwork.artist_zh || ''
+        const medium = lang === 'zh'
+          ? artwork.medium_zh || artwork.medium_en || ''
+          : artwork.medium_en || artwork.medium_zh || ''
+        return [artist, artwork.year_text, medium, artwork.size_text].filter(Boolean).join(' / ')
+      }
+
       const renderArtworkWall = () => {
-        document.querySelectorAll('[data-artwork-index]').forEach((card) => {
-          const index = Number(card.dataset.artworkIndex)
-          const artwork = artworks[index]
-          const title = card.querySelector('strong')
+        const items = artworks.length
+          ? artworks
+          : common[lang].wall.map((item) => ({ title_fallback: item.title }))
 
-          if (!artwork) {
-            card.classList.remove('has-image')
-            card.style.backgroundImage = ''
-            title.textContent = getCopy(`wall.${index}.title`)
-            return
-          }
+        document.querySelector('#artworkGrid').innerHTML = items
+          .map((artwork, index) => {
+            const title = getArtworkTitle(artwork) || artwork.title_fallback || getCopy(`wall.${index}.title`) || `Work ${index + 1}`
+            const meta = getArtworkMeta(artwork)
+            const description = getArtworkDescription(artwork)
+            const image = artwork.image_url || ''
 
-          card.classList.add('has-image')
-          card.style.backgroundImage = `url("${artwork.image_url}")`
-          title.textContent = getArtworkTitle(artwork) || getCopy(`wall.${index}.title`)
-        })
+            return `
+              <article
+                class="display-card${image ? ' has-image' : ''}"
+                ${image ? `style="background-image:url('${escapeHtml(image)}')"` : ''}
+              >
+                <span>${String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <strong>${escapeHtml(title)}</strong>
+                  ${meta ? `<p class="artwork-meta">${escapeHtml(meta)}</p>` : ''}
+                  ${description ? `<p class="artwork-description">${escapeHtml(description)}</p>` : ''}
+                </div>
+              </article>
+            `
+          })
+          .join('')
       }
 
       const hydrateFromApi = async () => {
