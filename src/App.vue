@@ -16,10 +16,7 @@ const toggleLang = () => {
 
 watchEffect(() => {
   document.documentElement.lang = lang.value === 'zh' ? 'zh-CN' : 'en'
-  document.title =
-    lang.value === 'zh'
-      ? 'MAX\u00c6.ART // \u827a\u672f\u5c55\u89c8'
-      : 'MAX\u00c6.ART // ART EXHIBITION'
+  document.title = 'MAX\u00c6'
   localStorage.setItem(languageKey, lang.value)
 })
 </script>
