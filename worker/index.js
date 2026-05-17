@@ -265,6 +265,33 @@ const appendAdminLog = async (env, request, action, target, detail = {}) => {
   await putJsonKV(env, 'admin:logs', logs.slice(0, 100), { expirationTtl: LOG_TTL })
 }
 
+const translateText = async (env, text, direction) => {
+  if (!env.AI || typeof env.AI.run !== 'function') {
+    throw new Error('Translation service is not configured')
+  }
+
+  const sourceLang = direction === 'en-zh' ? 'en' : 'zh'
+  const targetLang = direction === 'en-zh' ? 'zh' : 'en'
+  const result = await env.AI.run('@cf/meta/m2m100-1.2b', {
+    text,
+    source_lang: sourceLang,
+    target_lang: targetLang,
+  })
+
+  return String(result?.translated_text || result?.translation || '').trim()
+}
+
+const translateFields = async (env, fields = {}, direction = 'zh-en') => {
+  const entries = Object.entries(fields).filter(([, value]) => String(value || '').trim())
+  const translated = {}
+
+  for (const [key, value] of entries) {
+    translated[key] = await translateText(env, String(value).trim(), direction)
+  }
+
+  return translated
+}
+
 const getAdminCount = async (db) => {
   try {
     const row = await first(db, 'SELECT COUNT(*) AS count FROM admins')
@@ -543,6 +570,83 @@ const routeAdminArtworks = async (request, env, parts, url) => {
   return json({ error: 'Not found' }, { status: 404 })
 }
 
+const routeAdminUsers = async (request, env, parts) => {
+  if (request.method === 'GET' && parts.length === 2) {
+    return json(
+      await all(
+        env.DB.prepare(
+          `SELECT id, username, created_at, updated_at
+           FROM admins
+           ORDER BY id ASC`,
+        ),
+      ),
+    )
+  }
+
+  if (request.method === 'POST' && parts.length === 2) {
+    const body = await readJson(request)
+    const username = String(body.username || '').trim()
+    const password = String(body.password || '')
+    if (!username || password.length < 8) {
+      return json({ error: 'Username is required and password must be at least 8 characters' }, { status: 400 })
+    }
+
+    const result = await env.DB.prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)')
+      .bind(username, await hashPassword(password))
+      .run()
+    await appendAdminLog(env, request, 'create', 'admin', { id: result.meta.last_row_id, username })
+    return json({ id: result.meta.last_row_id, username }, { status: 201 })
+  }
+
+  if (request.method === 'PUT' && parts.length === 3) {
+    const body = await readJson(request)
+    const username = String(body.username || '').trim()
+    const password = String(body.password || '')
+    if (!username) return json({ error: 'Username is required' }, { status: 400 })
+    if (password && password.length < 8) {
+      return json({ error: 'Password must be at least 8 characters' }, { status: 400 })
+    }
+
+    if (password) {
+      await env.DB.prepare(
+        `UPDATE admins
+         SET username = ?, password_hash = ?, updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+      )
+        .bind(username, await hashPassword(password), parts[2])
+        .run()
+    } else {
+      await env.DB.prepare(
+        `UPDATE admins
+         SET username = ?, updated_at = CURRENT_TIMESTAMP
+         WHERE id = ?`,
+      )
+        .bind(username, parts[2])
+        .run()
+    }
+
+    await appendAdminLog(env, request, 'update', 'admin', { id: Number(parts[2]), username })
+    return json({ id: Number(parts[2]), username })
+  }
+
+  if (request.method === 'DELETE' && parts.length === 3) {
+    const adminCount = await getAdminCount(env.DB)
+    if (adminCount <= 1) return json({ error: 'At least one admin account is required' }, { status: 400 })
+
+    const current = await getAuthPayload(request, env)
+    const target = await first(env.DB, 'SELECT username FROM admins WHERE id = ?', parts[2])
+    if (target?.username && current?.username === target.username) {
+      return json({ error: 'You cannot delete the account you are currently using' }, { status: 400 })
+    }
+
+    await env.DB.prepare('DELETE FROM admins WHERE id = ?').bind(parts[2]).run()
+    await appendAdminLog(env, request, 'delete', 'admin', { id: Number(parts[2]), username: target?.username || '' })
+    return json({ ok: true })
+  }
+
+  return json({ error: 'Not found' }, { status: 404 })
+}
+
 const handleApi = async (request, env, apiPath) => {
   try {
     const url = new URL(request.url)
@@ -615,6 +719,15 @@ const handleApi = async (request, env, apiPath) => {
       if (auth) return auth
       if (parts[1] === 'logs' && request.method === 'GET') {
         return json(await getJsonKV(env, 'admin:logs', []))
+      }
+      if (parts[1] === 'translate' && request.method === 'POST') {
+        const body = await readJson(request)
+        const direction = body.direction === 'en-zh' ? 'en-zh' : 'zh-en'
+        const translations = await translateFields(env, body.fields || {}, direction)
+        await appendAdminLog(env, request, 'translate', direction, {
+          fields: Object.keys(translations),
+        })
+        return json({ direction, translations })
       }
       if (parts[1] === 'drafts' && parts.length === 3) {
         if (!hasKV(env)) return json({ error: 'KV binding is not configured' }, { status: 503 })

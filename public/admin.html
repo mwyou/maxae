@@ -387,6 +387,8 @@
           </div>
           <div class="actions">
             <button type="submit">保存分类</button>
+            <button id="translateCategoryToEn" class="secondary" type="button">中文译英文</button>
+            <button id="translateCategoryToZh" class="secondary" type="button">英文译中文</button>
             <button id="resetCategory" class="secondary" type="button">新建</button>
           </div>
           <p id="categoryNotice" class="notice"></p>
@@ -472,6 +474,8 @@
           </div>
           <div class="actions">
             <button type="submit">保存作品</button>
+            <button id="translateArtworkToEn" class="secondary" type="button">中文译英文</button>
+            <button id="translateArtworkToZh" class="secondary" type="button">英文译中文</button>
             <button id="saveArtworkDraft" class="secondary" type="button">保存草稿</button>
             <button id="loadArtworkDraft" class="secondary" type="button">恢复草稿</button>
             <button id="clearArtworkDraft" class="secondary" type="button">清除草稿</button>
@@ -540,6 +544,42 @@
       const resetForm = (form) => {
         form.reset()
         form.elements.id.value = ''
+      }
+
+      const translateForm = async (form, pairs, direction, noticeElement) => {
+        const sourceKey = direction === 'zh-en' ? 'zh' : 'en'
+        const targetKey = direction === 'zh-en' ? 'en' : 'zh'
+        const fields = {}
+        const targetBySource = {}
+
+        pairs.forEach(([zhName, enName]) => {
+          const sourceName = sourceKey === 'zh' ? zhName : enName
+          const targetName = targetKey === 'zh' ? zhName : enName
+          const value = form.elements[sourceName]?.value?.trim()
+          if (value) {
+            fields[sourceName] = value
+            targetBySource[sourceName] = targetName
+          }
+        })
+
+        if (!Object.keys(fields).length) {
+          noticeElement.textContent = '没有可翻译的内容'
+          return
+        }
+
+        noticeElement.textContent = '正在翻译...'
+        const result = await api('/api/admin/translate', {
+          method: 'POST',
+          body: JSON.stringify({ direction, fields }),
+        })
+
+        Object.entries(result.translations || {}).forEach(([sourceName, value]) => {
+          const targetName = targetBySource[sourceName]
+          if (targetName && form.elements[targetName]) {
+            form.elements[targetName].value = value || ''
+          }
+        })
+        noticeElement.textContent = '翻译已填入'
       }
 
       const showAdmin = async () => {
@@ -731,6 +771,52 @@
 
       $('#resetCategory').addEventListener('click', () => resetForm($('#categoryForm')))
       $('#resetArtwork').addEventListener('click', () => resetForm($('#artworkForm')))
+
+      const categoryTranslationPairs = [
+        ['name_zh', 'name_en'],
+        ['summary_zh', 'summary_en'],
+        ['medium_zh', 'medium_en'],
+        ['focus_zh', 'focus_en'],
+      ]
+
+      const artworkTranslationPairs = [
+        ['title_zh', 'title_en'],
+        ['artist_zh', 'artist_en'],
+        ['medium_zh', 'medium_en'],
+        ['description_zh', 'description_en'],
+      ]
+
+      $('#translateCategoryToEn').addEventListener('click', async () => {
+        try {
+          await translateForm($('#categoryForm'), categoryTranslationPairs, 'zh-en', $('#categoryNotice'))
+        } catch (error) {
+          $('#categoryNotice').textContent = error.message
+        }
+      })
+
+      $('#translateCategoryToZh').addEventListener('click', async () => {
+        try {
+          await translateForm($('#categoryForm'), categoryTranslationPairs, 'en-zh', $('#categoryNotice'))
+        } catch (error) {
+          $('#categoryNotice').textContent = error.message
+        }
+      })
+
+      $('#translateArtworkToEn').addEventListener('click', async () => {
+        try {
+          await translateForm($('#artworkForm'), artworkTranslationPairs, 'zh-en', $('#artworkNotice'))
+        } catch (error) {
+          $('#artworkNotice').textContent = error.message
+        }
+      })
+
+      $('#translateArtworkToZh').addEventListener('click', async () => {
+        try {
+          await translateForm($('#artworkForm'), artworkTranslationPairs, 'en-zh', $('#artworkNotice'))
+        } catch (error) {
+          $('#artworkNotice').textContent = error.message
+        }
+      })
 
       $('#saveArtworkDraft').addEventListener('click', async () => {
         try {
