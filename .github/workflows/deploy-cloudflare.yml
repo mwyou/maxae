@@ -38,6 +38,12 @@ jobs:
         env:
           CLOUDFLARE_D1_DATABASE_ID: ${{ secrets.CLOUDFLARE_D1_DATABASE_ID }}
 
+      - name: Configure KV binding
+        run: |
+          node -e "const fs=require('fs'); const p='wrangler.toml'; const id=process.env.CLOUDFLARE_KV_NAMESPACE_ID; if(!id) throw new Error('Missing CLOUDFLARE_KV_NAMESPACE_ID'); fs.writeFileSync(p, fs.readFileSync(p,'utf8').replace('CLOUDFLARE_KV_NAMESPACE_ID_PLACEHOLDER', id));"
+        env:
+          CLOUDFLARE_KV_NAMESPACE_ID: ${{ secrets.CLOUDFLARE_KV_NAMESPACE_ID }}
+
       - name: Apply D1 migrations
         uses: cloudflare/wrangler-action@v3
         with:
