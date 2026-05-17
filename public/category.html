@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MAX&AElig;.ART // Category</title>
+    <title>MAXÆ</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link
       href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Space+Grotesk:wght@300;500;700;900&display=swap"
       rel="stylesheet"
@@ -688,7 +689,7 @@
 
       const render = () => {
         document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en'
-        document.title = `MAX\u00c6.ART // ${data[lang].title}`
+        document.title = 'MAX\u00c6'
         localStorage.setItem(languageKey, lang)
         document.documentElement.style.setProperty('--accent', data.accent)
         document.documentElement.style.setProperty('--accent-soft', `${data.accent}24`)
