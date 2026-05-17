@@ -70,6 +70,21 @@
         background: rgb(255 255 255 / 0.06);
       }
 
+      select {
+        color-scheme: dark;
+        background-color: #202024;
+      }
+
+      select option {
+        color: #f4f4f5;
+        background-color: #202024;
+      }
+
+      select option:checked {
+        color: #0a0a0b;
+        background-color: #facc15;
+      }
+
       textarea {
         min-height: 92px;
         resize: vertical;
@@ -247,7 +262,7 @@
   <body>
     <section id="setupView" class="login panel hidden">
       <h1>Setup</h1>
-      <p class="muted">首次使用：创建后台管理员。D1 数据库 ID 已在 Cloudflare 绑定，不能在页面里修改。</p>
+      <p class="muted">创建后台管理员。</p>
       <label>
         Username
         <input id="setupUsername" autocomplete="username" value="admin" />
