@@ -7,6 +7,13 @@ const json = (data, init = {}) =>
     },
   })
 
+const CACHE_TTL = 300
+const LOGIN_WINDOW_SECONDS = 15 * 60
+const LOGIN_LOCK_SECONDS = 15 * 60
+const LOGIN_MAX_FAILURES = 5
+const LOG_TTL = 60 * 60 * 24 * 30
+const DRAFT_TTL = 60 * 60 * 24 * 14
+
 const readJson = async (request) => {
   try {
     return await request.json()
@@ -103,23 +110,7 @@ const makeToken = async (username, secret) => {
 }
 
 const verifyToken = async (request, env) => {
-  const secret = await getJwtSecret(env)
-  if (!secret) return false
-
-  const header = request.headers.get('authorization') || ''
-  const token = header.startsWith('Bearer ') ? header.slice(7) : ''
-  const [body, signature] = token.split('.')
-  if (!body || !signature) return false
-
-  const expected = await sign(body, secret)
-  if (signature !== expected) return false
-
-  try {
-    const payload = JSON.parse(fromB64url(body))
-    return payload.exp > Math.floor(Date.now() / 1000)
-  } catch {
-    return false
-  }
+  return Boolean(await getAuthPayload(request, env))
 }
 
 const all = async (statement) => {
@@ -153,6 +144,125 @@ const setSetting = (db, key, value) =>
 const getJwtSecret = async (env) => {
   if (env.JWT_SECRET) return env.JWT_SECRET
   return getSetting(env.DB, 'jwt_secret')
+}
+
+const hasKV = (env) => env.KV && typeof env.KV.get === 'function'
+
+const getJsonKV = async (env, key, fallback = null) => {
+  if (!hasKV(env)) return fallback
+  const value = await env.KV.get(key)
+  if (!value) return fallback
+  try {
+    return JSON.parse(value)
+  } catch {
+    return fallback
+  }
+}
+
+const putJsonKV = (env, key, value, options = {}) => {
+  if (!hasKV(env)) return Promise.resolve()
+  return env.KV.put(key, JSON.stringify(value), options)
+}
+
+const getClientIp = (request) =>
+  request.headers.get('cf-connecting-ip') ||
+  request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+  'unknown'
+
+const getAuthPayload = async (request, env) => {
+  const secret = await getJwtSecret(env)
+  if (!secret) return null
+
+  const header = request.headers.get('authorization') || ''
+  const token = header.startsWith('Bearer ') ? header.slice(7) : ''
+  const [body, signature] = token.split('.')
+  if (!body || !signature) return null
+
+  const expected = await sign(body, secret)
+  if (signature !== expected) return null
+
+  try {
+    const payload = JSON.parse(fromB64url(body))
+    return payload.exp > Math.floor(Date.now() / 1000) ? payload : null
+  } catch {
+    return null
+  }
+}
+
+const getCacheVersion = async (env) => {
+  if (!hasKV(env)) return '0'
+  const version = await env.KV.get('cache:version')
+  return version || '1'
+}
+
+const bumpCacheVersion = async (env) => {
+  if (!hasKV(env)) return
+  await env.KV.put('cache:version', String(Date.now()))
+}
+
+const publicCacheKey = async (env, url) =>
+  `cache:public:${await getCacheVersion(env)}:${url.pathname}${url.search}`
+
+const cachedJson = async (env, request, key, loader) => {
+  if (request.method !== 'GET' || !hasKV(env)) return json(await loader())
+
+  const cached = await env.KV.get(key)
+  if (cached) {
+    return new Response(cached, {
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': `public, max-age=${CACHE_TTL}`,
+        'x-maxae-cache': 'HIT',
+      },
+    })
+  }
+
+  const data = await loader()
+  await env.KV.put(key, JSON.stringify(data), { expirationTtl: CACHE_TTL })
+  return json(data, {
+    headers: {
+      'cache-control': `public, max-age=${CACHE_TTL}`,
+      'x-maxae-cache': 'MISS',
+    },
+  })
+}
+
+const loginKey = (request, username) =>
+  `login:${getClientIp(request)}:${String(username || '').toLowerCase()}`
+
+const checkLoginLimit = async (env, request, username) => {
+  const state = await getJsonKV(env, loginKey(request, username), { count: 0, lockedUntil: 0 })
+  const now = Math.floor(Date.now() / 1000)
+  return state.lockedUntil > now ? state.lockedUntil - now : 0
+}
+
+const recordLoginFailure = async (env, request, username) => {
+  if (!hasKV(env)) return
+  const key = loginKey(request, username)
+  const state = await getJsonKV(env, key, { count: 0, lockedUntil: 0 })
+  const count = Number(state.count || 0) + 1
+  const lockedUntil =
+    count >= LOGIN_MAX_FAILURES ? Math.floor(Date.now() / 1000) + LOGIN_LOCK_SECONDS : 0
+  await putJsonKV(env, key, { count, lockedUntil }, { expirationTtl: LOGIN_WINDOW_SECONDS })
+}
+
+const clearLoginFailure = async (env, request, username) => {
+  if (hasKV(env)) await env.KV.delete(loginKey(request, username))
+}
+
+const appendAdminLog = async (env, request, action, target, detail = {}) => {
+  if (!hasKV(env)) return
+  const payload = await getAuthPayload(request, env)
+  const logs = await getJsonKV(env, 'admin:logs', [])
+  logs.unshift({
+    at: new Date().toISOString(),
+    user: payload?.username || 'system',
+    ip: getClientIp(request),
+    action,
+    target,
+    detail,
+  })
+  await putJsonKV(env, 'admin:logs', logs.slice(0, 100), { expirationTtl: LOG_TTL })
 }
 
 const getAdminCount = async (db) => {
@@ -197,12 +307,13 @@ const requireAuth = async (request, env) => {
   return json({ error: 'Unauthorized' }, { status: 401 })
 }
 
-const routePublic = async (request, env, parts) => {
+const routePublic = async (request, env, parts, url) => {
   if (request.method !== 'GET') return json({ error: 'Method not allowed' }, { status: 405 })
+  const cacheKey = await publicCacheKey(env, url)
 
   if (parts.length === 2 && parts[1] === 'categories') {
-    return json(
-      await all(
+    return cachedJson(env, request, cacheKey, () =>
+      all(
         env.DB.prepare(
           `SELECT * FROM categories
            WHERE is_active = 1
@@ -218,7 +329,8 @@ const routePublic = async (request, env, parts) => {
       'SELECT * FROM categories WHERE slug = ? AND is_active = 1',
       parts[2],
     )
-    return category ? json(category) : json({ error: 'Category not found' }, { status: 404 })
+    if (!category) return json({ error: 'Category not found' }, { status: 404 })
+    return cachedJson(env, request, cacheKey, () => category)
   }
 
   if (parts.length === 4 && parts[1] === 'categories' && parts[3] === 'artworks') {
@@ -229,8 +341,8 @@ const routePublic = async (request, env, parts) => {
     )
     if (!category) return json({ error: 'Category not found' }, { status: 404 })
 
-    return json(
-      await all(
+    return cachedJson(env, request, cacheKey, () =>
+      all(
         env.DB.prepare(
           `SELECT artworks.*, categories.slug AS category_slug
            FROM artworks
@@ -278,6 +390,8 @@ const routeAdminCategories = async (request, env, parts) => {
       )
       .run()
 
+    await bumpCacheVersion(env)
+    await appendAdminLog(env, request, 'create', 'category', { id: result.meta.last_row_id, slug: payload.slug })
     return json({ id: result.meta.last_row_id, ...payload }, { status: 201 })
   }
 
@@ -312,11 +426,15 @@ const routeAdminCategories = async (request, env, parts) => {
       )
       .run()
 
+    await bumpCacheVersion(env)
+    await appendAdminLog(env, request, 'update', 'category', { id: Number(parts[2]), slug: payload.slug })
     return json({ id: Number(parts[2]), ...payload })
   }
 
   if (request.method === 'DELETE' && parts.length === 3) {
     await env.DB.prepare('DELETE FROM categories WHERE id = ?').bind(parts[2]).run()
+    await bumpCacheVersion(env)
+    await appendAdminLog(env, request, 'delete', 'category', { id: Number(parts[2]) })
     return json({ ok: true })
   }
 
@@ -366,6 +484,11 @@ const routeAdminArtworks = async (request, env, parts, url) => {
       )
       .run()
 
+    await bumpCacheVersion(env)
+    await appendAdminLog(env, request, 'create', 'artwork', {
+      id: result.meta.last_row_id,
+      title: payload.title_zh,
+    })
     return json({ id: result.meta.last_row_id, ...payload }, { status: 201 })
   }
 
@@ -402,11 +525,18 @@ const routeAdminArtworks = async (request, env, parts, url) => {
       )
       .run()
 
+    await bumpCacheVersion(env)
+    await appendAdminLog(env, request, 'update', 'artwork', {
+      id: Number(parts[2]),
+      title: payload.title_zh,
+    })
     return json({ id: Number(parts[2]), ...payload })
   }
 
   if (request.method === 'DELETE' && parts.length === 3) {
     await env.DB.prepare('DELETE FROM artworks WHERE id = ?').bind(parts[2]).run()
+    await bumpCacheVersion(env)
+    await appendAdminLog(env, request, 'delete', 'artwork', { id: Number(parts[2]) })
     return json({ ok: true })
   }
 
@@ -451,27 +581,65 @@ const handleApi = async (request, env, apiPath) => {
       const body = await readJson(request)
       const username = String(body.username || '').trim()
       const password = String(body.password || '')
+      const retryAfter = await checkLoginLimit(env, request, username)
+      if (retryAfter > 0) {
+        return json(
+          { error: `Too many login attempts. Try again in ${Math.ceil(retryAfter / 60)} minutes.` },
+          { status: 429, headers: { 'retry-after': String(retryAfter) } },
+        )
+      }
 
       const adminCount = await getAdminCount(env.DB)
       if (adminCount > 0) {
         const admin = await first(env.DB, 'SELECT username, password_hash FROM admins WHERE username = ?', username)
         if (!admin || !(await verifyPassword(password, admin.password_hash))) {
+          await recordLoginFailure(env, request, username)
           return json({ error: 'Invalid username or password' }, { status: 401 })
         }
+        await clearLoginFailure(env, request, username)
         return json({ username, token: await makeToken(username, await getJwtSecret(env)) })
       }
 
       if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) {
+        await recordLoginFailure(env, request, username)
         return json({ error: 'Invalid username or password' }, { status: 401 })
       }
+      await clearLoginFailure(env, request, username)
       return json({ username, token: await makeToken(username, await getJwtSecret(env)) })
     }
 
-    if (parts[0] === 'public') return routePublic(request, env, parts)
+    if (parts[0] === 'public') return routePublic(request, env, parts, url)
 
     if (parts[0] === 'admin') {
       const auth = await requireAuth(request, env)
       if (auth) return auth
+      if (parts[1] === 'logs' && request.method === 'GET') {
+        return json(await getJsonKV(env, 'admin:logs', []))
+      }
+      if (parts[1] === 'drafts' && parts.length === 3) {
+        if (!hasKV(env)) return json({ error: 'KV binding is not configured' }, { status: 503 })
+        const key = `draft:${parts[2]}`
+        if (request.method === 'GET') return json((await getJsonKV(env, key, {})) || {})
+        if (request.method === 'PUT') {
+          const body = await readJson(request)
+          await putJsonKV(
+            env,
+            key,
+            {
+              updated_at: new Date().toISOString(),
+              content: body.content || {},
+            },
+            { expirationTtl: DRAFT_TTL },
+          )
+          await appendAdminLog(env, request, 'save', 'draft', { name: parts[2] })
+          return json({ ok: true })
+        }
+        if (request.method === 'DELETE') {
+          await env.KV.delete(key)
+          await appendAdminLog(env, request, 'delete', 'draft', { name: parts[2] })
+          return json({ ok: true })
+        }
+      }
       if (parts[1] === 'categories') return routeAdminCategories(request, env, parts)
       if (parts[1] === 'artworks') return routeAdminArtworks(request, env, parts, url)
     }
@@ -492,6 +660,10 @@ export default {
 
     if (url.pathname.startsWith('/api/')) {
       return handleApi(request, env, url.pathname.slice('/api/'.length))
+    }
+
+    if (url.pathname === '/admin') {
+      return Response.redirect(`${url.origin}/admin.html`, 302)
     }
 
     return env.ASSETS.fetch(request)

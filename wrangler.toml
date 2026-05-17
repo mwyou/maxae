@@ -11,3 +11,7 @@ run_worker_first = ["/api/*"]
 binding = "DB"
 database_name = "maxae"
 database_id = "CLOUDFLARE_D1_DATABASE_ID_PLACEHOLDER"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "CLOUDFLARE_KV_NAMESPACE_ID_PLACEHOLDER"

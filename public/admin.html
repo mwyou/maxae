@@ -236,6 +236,25 @@
         color: #facc15;
       }
 
+      .log-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .log-item {
+        border: 1px solid rgb(255 255 255 / 0.08);
+        border-radius: 7px;
+        padding: 14px;
+        color: #d4d4d8;
+        background: rgb(255 255 255 / 0.04);
+      }
+
+      .log-item small {
+        display: block;
+        margin-top: 6px;
+        color: #71717a;
+      }
+
       .hidden {
         display: none;
       }
@@ -302,6 +321,7 @@
       <div class="tabs">
         <button class="tab is-active" type="button" data-tab="categories">分类</button>
         <button class="tab" type="button" data-tab="artworks">作品</button>
+        <button class="tab" type="button" data-tab="logs">操作日志</button>
       </div>
 
       <section id="categoriesPanel" class="grid">
@@ -452,6 +472,9 @@
           </div>
           <div class="actions">
             <button type="submit">保存作品</button>
+            <button id="saveArtworkDraft" class="secondary" type="button">保存草稿</button>
+            <button id="loadArtworkDraft" class="secondary" type="button">恢复草稿</button>
+            <button id="clearArtworkDraft" class="secondary" type="button">清除草稿</button>
             <button id="resetArtwork" class="secondary" type="button">新建</button>
           </div>
           <p id="artworkNotice" class="notice"></p>
@@ -462,6 +485,11 @@
           <div id="artworkList" class="list"></div>
         </section>
       </section>
+
+      <section id="logsPanel" class="panel hidden">
+        <h2>操作日志</h2>
+        <div id="logList" class="log-list"></div>
+      </section>
     </main>
 
     <script>
@@ -469,6 +497,7 @@
         token: localStorage.getItem('maxae-admin-token') || '',
         categories: [],
         artworks: [],
+        logs: [],
       }
 
       const $ = (selector) => document.querySelector(selector)
@@ -535,9 +564,11 @@
       const loadAll = async () => {
         state.categories = await api('/api/admin/categories')
         state.artworks = await api('/api/admin/artworks')
+        state.logs = await api('/api/admin/logs').catch(() => [])
         renderCategories()
         renderCategoryOptions()
         renderArtworks()
+        renderLogs()
       }
 
       const renderCategories = () => {
@@ -591,6 +622,21 @@
           .join('')
       }
 
+      const renderLogs = () => {
+        $('#logList').innerHTML = state.logs.length
+          ? state.logs
+              .map(
+                (item) => `
+                  <article class="log-item">
+                    <strong>${escapeHtml(item.action)} · ${escapeHtml(item.target)}</strong>
+                    <small>${escapeHtml(item.user)} · ${escapeHtml(item.ip)} · ${escapeHtml(item.at)}</small>
+                  </article>
+                `,
+              )
+              .join('')
+          : '<p class="muted">暂无日志</p>'
+      }
+
       $('#loginButton').addEventListener('click', async () => {
         try {
           const result = await api('/api/auth/login', {
@@ -639,6 +685,7 @@
           button.classList.add('is-active')
           $('#categoriesPanel').classList.toggle('hidden', button.dataset.tab !== 'categories')
           $('#artworksPanel').classList.toggle('hidden', button.dataset.tab !== 'artworks')
+          $('#logsPanel').classList.toggle('hidden', button.dataset.tab !== 'logs')
         })
       })
 
@@ -684,6 +731,45 @@
 
       $('#resetCategory').addEventListener('click', () => resetForm($('#categoryForm')))
       $('#resetArtwork').addEventListener('click', () => resetForm($('#artworkForm')))
+
+      $('#saveArtworkDraft').addEventListener('click', async () => {
+        try {
+          await api('/api/admin/drafts/artwork', {
+            method: 'PUT',
+            body: JSON.stringify({ content: formToObject($('#artworkForm')) }),
+          })
+          $('#artworkNotice').textContent = '草稿已保存'
+          state.logs = await api('/api/admin/logs').catch(() => state.logs)
+          renderLogs()
+        } catch (error) {
+          $('#artworkNotice').textContent = error.message
+        }
+      })
+
+      $('#loadArtworkDraft').addEventListener('click', async () => {
+        try {
+          const draft = await api('/api/admin/drafts/artwork')
+          if (!draft.content) {
+            $('#artworkNotice').textContent = '暂无草稿'
+            return
+          }
+          fillForm($('#artworkForm'), draft.content)
+          $('#artworkNotice').textContent = '草稿已恢复'
+        } catch (error) {
+          $('#artworkNotice').textContent = error.message
+        }
+      })
+
+      $('#clearArtworkDraft').addEventListener('click', async () => {
+        try {
+          await api('/api/admin/drafts/artwork', { method: 'DELETE' })
+          $('#artworkNotice').textContent = '草稿已清除'
+          state.logs = await api('/api/admin/logs').catch(() => state.logs)
+          renderLogs()
+        } catch (error) {
+          $('#artworkNotice').textContent = error.message
+        }
+      })
 
       document.addEventListener('click', async (event) => {
         const categoryEditId = event.target.dataset.editCategory
