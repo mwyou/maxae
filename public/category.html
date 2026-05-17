@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAX&AElig;.ART // Category</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Space+Grotesk:wght@300;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color: #f4f4f5;
+        background: #050505;
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+        scrollbar-width: none;
+      }
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 16% 18%, var(--accent-soft, rgb(168 85 247 / 0.16)), transparent 30rem),
+          linear-gradient(180deg, #050505 0%, #0c0c0d 100%);
+        color: #f4f4f5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .site-header {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        left: 0;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+        padding: 24px 32px;
+        background: rgb(11 11 11 / 0.48);
+        backdrop-filter: blur(18px) saturate(1.25);
+        -webkit-backdrop-filter: blur(18px) saturate(1.25);
+      }
+
+      .brand,
+      .maxae-logo {
+        display: block;
+        width: 46px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .desktop-nav {
+        display: flex;
+        gap: 32px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .desktop-nav a:hover,
+      .desktop-nav .is-active {
+        color: #facc15;
+      }
+
+      .language-toggle {
+        min-width: 48px;
+        border: 1px solid #3f3f46;
+        border-radius: 4px;
+        padding: 4px 12px;
+        color: #fff;
+        background: rgb(24 24 27 / 0.5);
+        backdrop-filter: blur(8px);
+        cursor: pointer;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      .category-hero {
+        position: relative;
+        display: grid;
+        min-height: 100svh;
+        align-items: end;
+        padding: 132px clamp(24px, 6vw, 92px) clamp(42px, 7vw, 84px);
+        overflow: hidden;
+      }
+
+      .hero-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: grayscale(0.12) brightness(0.88) contrast(1.04);
+        transform: scale(1.02);
+      }
+
+      .category-hero::after {
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(90deg, rgb(5 5 5 / 0.78) 0%, rgb(5 5 5 / 0.36) 44%, rgb(5 5 5 / 0.08) 100%),
+          linear-gradient(180deg, rgb(5 5 5 / 0.08), rgb(5 5 5 / 0.62));
+        content: '';
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+        gap: clamp(36px, 7vw, 92px);
+        align-items: end;
+      }
+
+      .category-kicker,
+      .meta-label,
+      .back-link {
+        color: #a1a1aa;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.32em;
+        line-height: 1.6;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        max-width: 980px;
+        margin: 18px 0 0;
+        font-size: clamp(56px, 12vw, 154px);
+        font-weight: 900;
+        letter-spacing: -0.075em;
+        line-height: 0.88;
+        text-transform: uppercase;
+      }
+
+      .hero-summary {
+        max-width: 560px;
+        margin: 28px 0 0;
+        color: #d4d4d8;
+        font-family:
+          'Noto Serif SC',
+          'Songti SC',
+          serif;
+        font-size: clamp(17px, 2vw, 23px);
+        letter-spacing: 0.06em;
+        line-height: 2;
+      }
+
+      .meta-panel {
+        border-left: 1px solid rgb(255 255 255 / 0.18);
+        padding-left: 28px;
+      }
+
+      .meta-panel dl {
+        display: grid;
+        gap: 24px;
+        margin: 0;
+      }
+
+      .meta-panel dt {
+        margin-bottom: 6px;
+      }
+
+      .meta-panel dd {
+        margin: 0;
+        color: #f4f4f5;
+        font-size: 15px;
+        letter-spacing: 0.08em;
+        line-height: 1.7;
+      }
+
+      .content-band {
+        width: min(1280px, 100%);
+        margin: 0 auto;
+        padding: clamp(82px, 11vw, 150px) clamp(24px, 6vw, 92px);
+      }
+
+      .display-grid {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-auto-rows: 92px;
+        gap: 18px;
+        margin-top: 58px;
+      }
+
+      .display-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 0;
+        overflow: hidden;
+        border: 1px solid rgb(255 255 255 / 0.1);
+        padding: 24px;
+        background:
+          linear-gradient(145deg, rgb(255 255 255 / 0.07), transparent 58%),
+          #111113;
+        background-position: center;
+        background-size: cover;
+      }
+
+      .display-card::after {
+        position: absolute;
+        right: -20%;
+        bottom: -20%;
+        width: 68%;
+        aspect-ratio: 1;
+        border: 1px solid color-mix(in srgb, var(--accent, #facc15) 45%, transparent);
+        content: '';
+        opacity: 0.45;
+        transform: rotate(12deg);
+      }
+
+      .display-card.has-image::before {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgb(0 0 0 / 0.18), rgb(0 0 0 / 0.72));
+        content: '';
+      }
+
+      .display-card.has-image::after {
+        opacity: 0.18;
+      }
+
+      .display-card:nth-child(1) {
+        grid-column: span 4;
+        grid-row: span 4;
+      }
+
+      .display-card:nth-child(2) {
+        grid-column: span 2;
+        grid-row: span 3;
+      }
+
+      .display-card:nth-child(3) {
+        grid-column: span 2;
+        grid-row: span 3;
+      }
+
+      .display-card:nth-child(4) {
+        grid-column: span 3;
+        grid-row: span 3;
+      }
+
+      .display-card:nth-child(5) {
+        grid-column: span 3;
+        grid-row: span 3;
+      }
+
+      .display-card span {
+        position: relative;
+        z-index: 1;
+        color: #52525b;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+      }
+
+      .display-card strong {
+        position: relative;
+        z-index: 1;
+        display: block;
+        color: #f4f4f5;
+        font-size: clamp(20px, 3vw, 38px);
+        letter-spacing: 0.08em;
+        line-height: 1.5;
+      }
+
+      .display-card p {
+        position: relative;
+        z-index: 1;
+        margin: 16px 0 0;
+        color: #a1a1aa;
+        font-size: 14px;
+        letter-spacing: 0.08em;
+        line-height: 1.8;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-top: 54px;
+        color: #facc15;
+      }
+
+      @media (max-width: 860px) {
+        .hero-content,
+        .display-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .display-grid {
+          grid-auto-rows: 88px;
+        }
+
+        .display-card:nth-child(n) {
+          grid-column: auto;
+          grid-row: span 3;
+        }
+
+        .meta-panel {
+          border-left: 0;
+          border-top: 1px solid rgb(255 255 255 / 0.18);
+          padding-top: 24px;
+          padding-left: 0;
+        }
+
+        .desktop-nav {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-header" aria-label="Primary navigation">
+      <a href="/" class="brand" aria-label="MAXAE.ART home">
+        <img
+          class="maxae-logo"
+          src="https://imgbed.698891.xyz/file/logo/maxae/1778980346239_maxae.png"
+          alt="MAXAE logo"
+          decoding="async"
+        />
+      </a>
+      <div class="header-actions">
+        <div class="desktop-nav">
+          <a class="is-active" href="/exhibition.html" data-i18n="nav.exhibition">Exhibition</a>
+          <a href="/about.html" data-i18n="nav.about">About</a>
+        </div>
+        <button class="language-toggle" type="button" aria-label="Switch to English">EN</button>
+      </div>
+    </nav>
+
+    <main>
+      <section class="category-hero">
+        <img class="hero-image" alt="" />
+        <div class="hero-content">
+          <div>
+            <div class="category-kicker" data-i18n="kicker">Online Exhibition</div>
+            <h1 data-i18n="title">Category</h1>
+            <p class="hero-summary" data-i18n="summary"></p>
+          </div>
+          <aside class="meta-panel">
+            <dl>
+              <div>
+                <dt class="meta-label" data-i18n="meta.mediumLabel">Medium</dt>
+                <dd data-i18n="meta.medium"></dd>
+              </div>
+              <div>
+                <dt class="meta-label" data-i18n="meta.focusLabel">Focus</dt>
+                <dd data-i18n="meta.focus"></dd>
+              </div>
+              <div>
+                <dt class="meta-label" data-i18n="meta.viewLabel">View</dt>
+                <dd data-i18n="meta.view"></dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+      </section>
+
+      <section class="content-band">
+        <div>
+          <div class="display-grid">
+            <div class="display-card" data-artwork-index="0">
+              <span>01</span>
+              <strong data-i18n="wall.0.title"></strong>
+            </div>
+            <div class="display-card" data-artwork-index="1">
+              <span>02</span>
+              <strong data-i18n="wall.1.title"></strong>
+            </div>
+            <div class="display-card" data-artwork-index="2">
+              <span>03</span>
+              <strong data-i18n="wall.2.title"></strong>
+            </div>
+            <div class="display-card" data-artwork-index="3">
+              <span>04</span>
+              <strong data-i18n="wall.3.title"></strong>
+            </div>
+            <div class="display-card" data-artwork-index="4">
+              <span>05</span>
+              <strong data-i18n="wall.4.title"></strong>
+            </div>
+          </div>
+          <a class="back-link" href="/exhibition.html" data-i18n="back">Back to Exhibition</a>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const categories = {
+        'chinese-painting': {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/ChinesePainting/1778989480481_27576_1024_.jpg',
+          accent: '#c084fc',
+          zh: {
+            title: '\u4e2d\u56fd\u753b',
+            summary: '\u4ee5\u7b14\u58a8\u3001\u6c14\u97f5\u548c\u7559\u767d\u6784\u6210\u7684\u89c2\u770b\u65b9\u5f0f\uff0c\u5728\u58a8\u8272\u6d53\u6de1\u4e4b\u95f4\u5efa\u7acb\u7cbe\u795e\u7684\u7a7a\u95f4\u3002',
+            medium: '\u6c34\u58a8 / \u5de5\u7b14 / \u4eba\u7269 / \u5c71\u6c34',
+            focus: '\u7b14\u58a8\u79e9\u5e8f\u3001\u7a7a\u95f4\u7559\u767d\u3001\u610f\u5883\u751f\u6210',
+          },
+          en: {
+            title: 'Chinese Painting',
+            summary: 'A way of seeing built from brush, ink, rhythm, and emptiness, where spiritual space appears through tonal depth.',
+            medium: 'Ink / Wash / Figure / Landscape',
+            focus: 'Brush order, negative space, atmosphere',
+          },
+        },
+        'oil-painting': {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/OilPainting/1778991136054_pexels-photo-5203636.jpeg',
+          accent: '#facc15',
+          zh: {
+            title: '\u6cb9\u753b',
+            summary: '\u989c\u6599\u7684\u539a\u5ea6\u3001\u5149\u7ebf\u7684\u5c42\u6b21\u4e0e\u753b\u9762\u7684\u65f6\u95f4\u611f\uff0c\u5171\u540c\u6784\u6210\u6cb9\u753b\u7684\u53ef\u89c6\u91cd\u91cf\u3002',
+            medium: '\u6cb9\u5f69 / \u4e19\u70ef / \u5177\u8c61 / \u62bd\u8c61',
+            focus: '\u8272\u5f69\u5c42\u6b21\u3001\u5149\u611f\u3001\u753b\u9762\u7ed3\u6784',
+          },
+          en: {
+            title: 'Oil Painting',
+            summary: 'Pigment thickness, light, and pictorial time give painting its visible weight and emotional density.',
+            medium: 'Oil / Acrylic / Figurative / Abstract',
+            focus: 'Color layers, light, pictorial structure',
+          },
+        },
+        printmaking: {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/Printmaking/1778991775952_pexels-photo-36098334.jpeg',
+          accent: '#c084fc',
+          zh: {
+            title: '\u7248\u753b',
+            summary: '\u5728\u538b\u529b\u3001\u523b\u75d5\u4e0e\u590d\u6570\u4e4b\u95f4\uff0c\u7248\u753b\u628a\u6750\u6599\u7684\u75d5\u8ff9\u8f6c\u5316\u4e3a\u56fe\u50cf\u7684\u79e9\u5e8f\u3002',
+            medium: '\u6728\u523b / \u94dc\u7248 / \u77f3\u7248 / \u4e1d\u7f51',
+            focus: '\u75d5\u8ff9\u3001\u538b\u5370\u3001\u590d\u6570\u4e0e\u7248\u672c',
+          },
+          en: {
+            title: 'Printmaking',
+            summary: 'Between pressure, incision, and edition, printmaking turns material trace into pictorial order.',
+            medium: 'Woodcut / Intaglio / Lithography / Screenprint',
+            focus: 'Trace, pressure, edition, matrix',
+          },
+        },
+        sculpture: {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/Sculpture/1778991252006_pexels-photo-4195626.jpeg',
+          accent: '#facc15',
+          zh: {
+            title: '\u96d5\u5851',
+            summary: '\u96d5\u5851\u628a\u91cd\u91cf\u3001\u4f53\u91cf\u548c\u7a7a\u95f4\u5173\u7cfb\u53d8\u6210\u53ef\u7ed5\u884c\u7684\u89c2\u770b\u7ecf\u9a8c\u3002',
+            medium: '\u77f3\u6750 / \u91d1\u5c5e / \u6728\u6750 / \u9676\u571f',
+            focus: '\u4f53\u91cf\u3001\u91cd\u91cf\u3001\u7a7a\u95f4\u548c\u89e6\u611f',
+          },
+          en: {
+            title: 'Sculpture',
+            summary: 'Sculpture turns weight, volume, and spatial relation into an experience that can be walked around.',
+            medium: 'Stone / Metal / Wood / Clay',
+            focus: 'Volume, weight, space, tactility',
+          },
+        },
+        'mural-painting': {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/MuralPainting/1778996646575_image.png',
+          accent: '#c084fc',
+          zh: {
+            title: '\u58c1\u753b',
+            summary: '\u58c1\u753b\u4ee5\u5899\u9762\u4e3a\u8f7d\u4f53\uff0c\u8ba9\u56fe\u50cf\u548c\u5efa\u7b51\u3001\u573a\u57df\u4e0e\u516c\u5171\u8bb0\u5fc6\u53d1\u751f\u5173\u7cfb\u3002',
+            medium: '\u5899\u9762\u7ed8\u753b / \u516c\u5171\u827a\u672f / \u6e7f\u58c1\u753b',
+            focus: '\u573a\u57df\u3001\u5c3a\u5ea6\u3001\u516c\u5171\u6027',
+          },
+          en: {
+            title: 'Mural Painting',
+            summary: 'Mural painting uses the wall as its support, linking image with architecture, site, and public memory.',
+            medium: 'Wall Painting / Public Art / Fresco',
+            focus: 'Site, scale, public presence',
+          },
+        },
+        drawing: {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/Drawing/1778991599540_pexels-photo-7608653.jpeg',
+          accent: '#facc15',
+          zh: {
+            title: '\u7d20\u63cf',
+            summary: '\u7d20\u63cf\u4ee5\u6700\u76f4\u63a5\u7684\u7ebf\u6761\u8bb0\u5f55\u89c2\u5bdf\uff0c\u5728\u9ed1\u767d\u3001\u660e\u6697\u548c\u7ed3\u6784\u4e2d\u8bad\u7ec3\u89c6\u89c9\u7684\u5224\u65ad\u529b\u3002',
+            medium: '\u901f\u5199 / \u70ad\u7b14 / \u77f3\u58a8 / \u58a8',
+            focus: '\u7ebf\u6761\u3001\u7ed3\u6784\u3001\u660e\u6697\u548c\u89c2\u5bdf',
+          },
+          en: {
+            title: 'Drawing',
+            summary: 'Drawing records observation through direct line, training visual judgment through tone, structure, and proportion.',
+            medium: 'Sketch / Charcoal / Graphite / Ink',
+            focus: 'Line, structure, tone, observation',
+          },
+        },
+        calligraphy: {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/Calligraphy/1778989600680_17170_1024_.jpg',
+          accent: '#c084fc',
+          zh: {
+            title: '\u4e66\u6cd5',
+            summary: '\u4e66\u6cd5\u5728\u7b14\u52bf\u3001\u8282\u594f\u4e0e\u7ed3\u4f53\u4e2d\u5c55\u5f00\uff0c\u628a\u6587\u5b57\u7684\u610f\u4e49\u63a8\u5411\u8eab\u4f53\u4e0e\u65f6\u95f4\u3002',
+            medium: '\u4e66\u4f53 / \u7bc6\u523b / \u9898\u8dcb / \u6c34\u58a8',
+            focus: '\u7b14\u52bf\u3001\u7ed3\u4f53\u3001\u8282\u594f\u548c\u6c14\u606f',
+          },
+          en: {
+            title: 'Calligraphy',
+            summary: 'Calligraphy unfolds through gesture, rhythm, and structure, extending written meaning into body and time.',
+            medium: 'Script / Seal / Inscription / Ink',
+            focus: 'Gesture, structure, rhythm, breath',
+          },
+        },
+        'watercolor-pastel': {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/WatercolorPastel/1778995327832_pexels-photo-24783388.jpeg',
+          accent: '#facc15',
+          zh: {
+            title: '\u6c34\u5f69\u4e0e\u7c89\u753b',
+            summary: '\u6c34\u5f69\u4e0e\u7c89\u753b\u4ee5\u900f\u660e\u3001\u9897\u7c92\u548c\u7eb8\u9762\u5438\u9644\u4e3a\u8bed\u8a00\uff0c\u5728\u8f7b\u76c8\u4e2d\u7559\u4f4f\u77ac\u95f4\u3002',
+            medium: '\u6c34\u5f69 / \u6c34\u7c89 / \u8272\u7c89 / \u7eb8\u672c',
+            focus: '\u900f\u660e\u5ea6\u3001\u9897\u7c92\u3001\u7eb8\u611f\u548c\u8272\u5c42',
+          },
+          en: {
+            title: 'Watercolor & Pastel',
+            summary: 'Watercolor and pastel speak through transparency, grain, and paper absorption, holding the instant in lightness.',
+            medium: 'Watercolor / Gouache / Pastel / Paper',
+            focus: 'Transparency, grain, paper, color layers',
+          },
+        },
+        'mixed-media': {
+          image: 'https://imgbed.698891.xyz/file/logo/maxae/MixedMedia/1778996173874_photo-1604871000636-074fa5117945',
+          accent: '#c084fc',
+          zh: {
+            title: '\u7efc\u5408\u6750\u6599\u827a\u672f',
+            summary: '\u7efc\u5408\u6750\u6599\u628a\u5e73\u9762\u3001\u7269\u4ef6\u3001\u80cc\u666f\u548c\u75d5\u8ff9\u653e\u5728\u4e00\u8d77\uff0c\u8ba9\u6750\u6599\u672c\u8eab\u53c2\u4e0e\u53d9\u4e8b\u3002',
+            medium: '\u62fc\u8d34 / \u88c5\u914d / \u6750\u6599 / \u7269\u4ef6',
+            focus: '\u5c42\u53e0\u3001\u7269\u6027\u3001\u7ec4\u5408\u548c\u8bed\u5883',
+          },
+          en: {
+            title: 'Mixed Media',
+            summary: 'Mixed media brings surface, object, background, and trace together, allowing material itself to enter the narrative.',
+            medium: 'Collage / Assemblage / Material / Object',
+            focus: 'Layering, materiality, assembly, context',
+          },
+        },
+      }
+
+      const common = {
+        zh: {
+          nav: { exhibition: '\u5c55\u89c8', about: '\u5173\u4e8e' },
+          kicker: '\u7ebf\u4e0a\u5c55\u89c8',
+          back: '\u8fd4\u56de\u5c55\u89c8',
+          meta: {
+            mediumLabel: '\u5a92\u4ecb',
+            focusLabel: '\u5173\u952e\u8bcd',
+            viewLabel: '\u5c55\u89c8\u7ed3\u6784',
+            view: '\u7b56\u5c55\u8bf4\u660e / \u4f5c\u54c1\u5899',
+          },
+          wall: [
+            { title: '\u4f5c\u54c1 01' },
+            { title: '\u4f5c\u54c1 02' },
+            { title: '\u4f5c\u54c1 03' },
+            { title: '\u4f5c\u54c1 04' },
+            { title: '\u4f5c\u54c1 05' },
+          ],
+        },
+        en: {
+          nav: { exhibition: 'Exhibition', about: 'About' },
+          kicker: 'Online Exhibition',
+          back: 'Back to Exhibition',
+          meta: {
+            mediumLabel: 'Medium',
+            focusLabel: 'Focus',
+            viewLabel: 'View',
+            view: 'Curatorial note / Work wall',
+          },
+          wall: [
+            { title: 'Work 01' },
+            { title: 'Work 02' },
+            { title: 'Work 03' },
+            { title: 'Work 04' },
+            { title: 'Work 05' },
+          ],
+        },
+      }
+
+      const params = new URLSearchParams(window.location.search)
+      const type = params.get('type') || 'chinese-painting'
+      const data = categories[type] || categories['chinese-painting']
+      let artworks = []
+      const button = document.querySelector('.language-toggle')
+      const languageKey = 'maxae-lang'
+      let lang = localStorage.getItem(languageKey) === 'en' ? 'en' : 'zh'
+
+      const getCopy = (path) => {
+        if (path === 'title' || path === 'summary') return data[lang][path]
+        if (path.startsWith('meta.')) {
+          const key = path.split('.')[1]
+          return data[lang][key] || common[lang].meta[key]
+        }
+        if (path.startsWith('wall.')) {
+          const [, index, key] = path.split('.')
+          const wall = common[lang].wall[Number(index)]
+          return wall?.[key]
+        }
+        return path.split('.').reduce((value, key) => value?.[key], common[lang])
+      }
+
+      const getArtworkTitle = (artwork) => {
+        if (!artwork) return ''
+        return lang === 'zh'
+          ? artwork.title_zh || artwork.title_en || ''
+          : artwork.title_en || artwork.title_zh || ''
+      }
+
+      const renderArtworkWall = () => {
+        document.querySelectorAll('[data-artwork-index]').forEach((card) => {
+          const index = Number(card.dataset.artworkIndex)
+          const artwork = artworks[index]
+          const title = card.querySelector('strong')
+
+          if (!artwork) {
+            card.classList.remove('has-image')
+            card.style.backgroundImage = ''
+            title.textContent = getCopy(`wall.${index}.title`)
+            return
+          }
+
+          card.classList.add('has-image')
+          card.style.backgroundImage = `url("${artwork.image_url}")`
+          title.textContent = getArtworkTitle(artwork) || getCopy(`wall.${index}.title`)
+        })
+      }
+
+      const hydrateFromApi = async () => {
+        try {
+          const [categoryResponse, artworkResponse] = await Promise.all([
+            fetch(`/api/public/categories/${type}`),
+            fetch(`/api/public/categories/${type}/artworks`),
+          ])
+
+          if (!categoryResponse.ok || !artworkResponse.ok) return
+
+          const category = await categoryResponse.json()
+          artworks = await artworkResponse.json()
+
+          data.image = category.cover_url || data.image
+          data.accent = category.accent || data.accent
+          data.zh = {
+            ...data.zh,
+            title: category.name_zh || data.zh.title,
+            summary: category.summary_zh || data.zh.summary,
+            medium: category.medium_zh || data.zh.medium,
+            focus: category.focus_zh || data.zh.focus,
+          }
+          data.en = {
+            ...data.en,
+            title: category.name_en || data.en.title,
+            summary: category.summary_en || data.en.summary,
+            medium: category.medium_en || data.en.medium,
+            focus: category.focus_en || data.en.focus,
+          }
+          render()
+        } catch {
+          render()
+        }
+      }
+
+      const render = () => {
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en'
+        document.title = `MAX\u00c6.ART // ${data[lang].title}`
+        localStorage.setItem(languageKey, lang)
+        document.documentElement.style.setProperty('--accent', data.accent)
+        document.documentElement.style.setProperty('--accent-soft', `${data.accent}24`)
+        document.querySelector('.hero-image').src = data.image
+        document.querySelector('.hero-image').alt = data[lang].title
+        document.querySelectorAll('[data-i18n]').forEach((element) => {
+          element.textContent = getCopy(element.dataset.i18n)
+        })
+        button.textContent = lang === 'zh' ? 'EN' : '\u4e2d\u6587'
+        button.setAttribute(
+          'aria-label',
+          lang === 'zh' ? 'Switch to English' : '\u5207\u6362\u5230\u4e2d\u6587',
+        )
+        renderArtworkWall()
+      }
+
+      button.addEventListener('click', () => {
+        lang = lang === 'zh' ? 'en' : 'zh'
+        render()
+      })
+
+      render()
+      hydrateFromApi()
+    </script>
+  </body>
+</html>

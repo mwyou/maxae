@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAX&AElig;.ART // Exhibition</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-color: #050505;
+        color: #f4f4f5;
+        background: var(--bg-color);
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        margin: 0;
+        background-color: var(--bg-color);
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        color: #f4f4f5;
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      html {
+        scrollbar-width: none;
+      }
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      ::selection {
+        color: #fff;
+        background: #581c87;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .site-header {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        left: 0;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+        padding: 24px 32px;
+        background: rgb(11 11 11 / 0.48);
+        backdrop-filter: blur(18px) saturate(1.25);
+        -webkit-backdrop-filter: blur(18px) saturate(1.25);
+      }
+
+      .brand {
+        display: block;
+        width: 46px;
+        color: #fff;
+        line-height: 0;
+      }
+
+      .maxae-logo {
+        display: block;
+        width: 46px;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        transition:
+          filter 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .maxae-logo:hover {
+        filter: drop-shadow(0 0 30px rgb(168 85 247 / 0.55));
+        transform: translateY(-1px);
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .desktop-nav {
+        display: flex;
+        gap: 32px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .desktop-nav a {
+        transition: color 180ms ease;
+      }
+
+      .desktop-nav a:nth-child(odd):hover,
+      .desktop-nav a.is-active {
+        color: #facc15;
+      }
+
+      .desktop-nav a:nth-child(even):hover {
+        color: #c084fc;
+      }
+
+      .language-toggle {
+        min-width: 48px;
+        border: 1px solid #3f3f46;
+        border-radius: 4px;
+        padding: 4px 12px;
+        color: #fff;
+        background: rgb(24 24 27 / 0.5);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        cursor: pointer;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        line-height: 1.5;
+        text-transform: uppercase;
+        transition:
+          border-color 180ms ease,
+          color 180ms ease,
+          transform 180ms ease;
+      }
+
+      .language-toggle:hover,
+      .language-toggle:focus-visible {
+        border-color: #facc15;
+        color: #facc15;
+      }
+
+      main {
+        width: min(1800px, 100%);
+        margin: 0 auto;
+        padding: 144px 16px 96px;
+      }
+
+      .page-header {
+        margin-bottom: 48px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(32px, 5vw, 56px);
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        line-height: 1;
+        text-transform: uppercase;
+      }
+
+      .page-header p {
+        margin: 0;
+        color: #71717a;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 0.22em;
+        line-height: 1.6;
+        text-transform: uppercase;
+      }
+
+      .masonry-grid {
+        column-count: 1;
+        column-gap: 24px;
+      }
+
+      .masonry-item {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        margin-bottom: 24px;
+        min-height: var(--tile-height, 360px);
+        break-inside: avoid;
+        background: #111;
+        cursor: pointer;
+      }
+
+      .masonry-item img {
+        display: block;
+        width: 100%;
+        height: var(--tile-height, 360px);
+        object-fit: cover;
+        filter: grayscale(1);
+        transform: scale(1);
+        transition:
+          filter 600ms ease,
+          transform 600ms ease;
+      }
+
+      .masonry-item:hover img {
+        filter: grayscale(0);
+        transform: scale(1.05);
+      }
+
+      .masonry-item:nth-child(1) {
+        --tile-height: 520px;
+      }
+
+      .masonry-item:nth-child(2) {
+        --tile-height: 380px;
+      }
+
+      .masonry-item:nth-child(3) {
+        --tile-height: 610px;
+      }
+
+      .masonry-item:nth-child(4) {
+        --tile-height: 430px;
+      }
+
+      .masonry-item:nth-child(5) {
+        --tile-height: 560px;
+      }
+
+      .masonry-item:nth-child(6) {
+        --tile-height: 350px;
+      }
+
+      .masonry-item:nth-child(7) {
+        --tile-height: 500px;
+      }
+
+      .masonry-item:nth-child(8) {
+        --tile-height: 390px;
+      }
+
+      .masonry-item:nth-child(9) {
+        --tile-height: 560px;
+      }
+
+      .masonry-item::after {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgb(0 0 0 / 0.9), rgb(0 0 0 / 0.2), transparent);
+        content: '';
+        opacity: 0.8;
+        transition: opacity 300ms ease;
+      }
+
+      .masonry-item:hover::after {
+        opacity: 0.9;
+      }
+
+      .item-copy {
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 24px;
+        transform: translateY(16px);
+        transition: transform 500ms ease;
+      }
+
+      .masonry-item:hover .item-copy {
+        transform: translateY(0);
+      }
+
+      .item-number {
+        display: block;
+        margin-bottom: 8px;
+        color: #c084fc;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        opacity: 0.78;
+        transition: opacity 500ms ease 100ms;
+      }
+
+      .masonry-item:hover .item-number,
+      .masonry-item:hover p {
+        opacity: 1;
+      }
+
+      h2 {
+        margin: 0;
+        color: #fff;
+        font-size: clamp(32px, 5vw, 56px);
+        font-weight: 900;
+        letter-spacing: -0.06em;
+        line-height: 0.96;
+        text-transform: uppercase;
+      }
+
+      .item-copy p {
+        margin: 8px 0 0;
+        color: #a1a1aa;
+        font-size: 14px;
+        font-weight: 300;
+        line-height: 1.6;
+        opacity: 0.82;
+        transition: opacity 500ms ease 200ms;
+      }
+
+      @media (min-width: 768px) {
+        main {
+          padding-right: 32px;
+          padding-left: 32px;
+        }
+
+        .masonry-grid {
+          column-count: 2;
+        }
+
+        .item-copy {
+          padding: 32px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .masonry-grid {
+          column-count: 3;
+        }
+      }
+
+      @media (max-width: 767px) {
+        .site-header {
+          padding: 24px;
+        }
+
+        .desktop-nav {
+          display: none;
+        }
+
+        .brand,
+        .maxae-logo {
+          width: 42px;
+        }
+
+        .masonry-item:nth-child(n) {
+          --tile-height: 420px;
+        }
+
+        .masonry-item:nth-child(2n) {
+          --tile-height: 340px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-header" aria-label="Primary navigation">
+      <a href="/" class="brand" aria-label="MAXAE.ART home">
+        <img
+          class="maxae-logo"
+          src="https://imgbed.698891.xyz/file/logo/maxae/1778980346239_maxae.png"
+          alt="MAXAE logo"
+          decoding="async"
+        />
+      </a>
+
+      <div class="header-actions">
+        <div class="desktop-nav">
+          <a class="is-active" href="/exhibition.html" data-i18n="nav.exhibition">Exhibition</a>
+          <a href="/about.html" data-i18n="nav.about">About</a>
+        </div>
+        <button class="language-toggle" type="button" aria-label="Switch to English">EN</button>
+      </div>
+    </nav>
+
+    <main>
+      <header class="page-header">
+        <h1 data-i18n="page.title">Art Exhibition</h1>
+        <p data-i18n="page.subtitle">Select an art category to explore</p>
+      </header>
+
+      <section class="masonry-grid" aria-label="Art disciplines">
+        <article id="chinese-painting" class="masonry-item" data-category="chinese-painting" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/ChinesePainting/1778989480481_27576_1024_.jpg" alt="Chinese painting" />
+          <div class="item-copy">
+            <span class="item-number">01</span>
+            <h2 data-i18n="items.chinesePainting.title">Chinese Painting</h2>
+            <p data-i18n="items.chinesePainting.desc">Ink, Wash, Figure, Landscape</p>
+          </div>
+        </article>
+
+        <article id="oil-painting" class="masonry-item" data-category="oil-painting" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/OilPainting/1778991136054_pexels-photo-5203636.jpeg" alt="Oil painting" />
+          <div class="item-copy">
+            <span class="item-number">02</span>
+            <h2 data-i18n="items.oilPainting.title">Oil Painting</h2>
+            <p data-i18n="items.oilPainting.desc">Oil, Acrylic, Figurative, Abstract</p>
+          </div>
+        </article>
+
+        <article id="printmaking" class="masonry-item" data-category="printmaking" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/Printmaking/1778991775952_pexels-photo-36098334.jpeg" alt="Printmaking" />
+          <div class="item-copy">
+            <span class="item-number">03</span>
+            <h2 data-i18n="items.printmaking.title">Printmaking</h2>
+            <p data-i18n="items.printmaking.desc">Woodcut, Intaglio, Lithography, Screenprint</p>
+          </div>
+        </article>
+
+        <article id="sculpture" class="masonry-item" data-category="sculpture" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/Sculpture/1778991252006_pexels-photo-4195626.jpeg" alt="Sculpture" />
+          <div class="item-copy">
+            <span class="item-number">04</span>
+            <h2 data-i18n="items.sculpture.title">Sculpture</h2>
+            <p data-i18n="items.sculpture.desc">Stone, Metal, Wood, Clay</p>
+          </div>
+        </article>
+
+        <article id="mural-painting" class="masonry-item" data-category="mural-painting" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/MuralPainting/1778996646575_image.png" alt="Mural painting" />
+          <div class="item-copy">
+            <span class="item-number">05</span>
+            <h2 data-i18n="items.mural.title">Mural Painting</h2>
+            <p data-i18n="items.mural.desc">Wall Painting, Public Art, Fresco</p>
+          </div>
+        </article>
+
+        <article id="drawing" class="masonry-item" data-category="drawing" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/Drawing/1778991599540_pexels-photo-7608653.jpeg" alt="Drawing" />
+          <div class="item-copy">
+            <span class="item-number">06</span>
+            <h2 data-i18n="items.drawing.title">Drawing</h2>
+            <p data-i18n="items.drawing.desc">Sketch, Charcoal, Graphite, Ink</p>
+          </div>
+        </article>
+
+        <article id="calligraphy" class="masonry-item" data-category="calligraphy" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/Calligraphy/1778989600680_17170_1024_.jpg" alt="Calligraphy" />
+          <div class="item-copy">
+            <span class="item-number">07</span>
+            <h2 data-i18n="items.calligraphy.title">Calligraphy</h2>
+            <p data-i18n="items.calligraphy.desc">Script, Seal, Inscription, Ink</p>
+          </div>
+        </article>
+
+        <article id="watercolor-pastel" class="masonry-item" data-category="watercolor-pastel" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/WatercolorPastel/1778995327832_pexels-photo-24783388.jpeg" alt="Watercolor and pastel" />
+          <div class="item-copy">
+            <span class="item-number">08</span>
+            <h2 data-i18n="items.watercolorPastel.title">Watercolor & Pastel</h2>
+            <p data-i18n="items.watercolorPastel.desc">Watercolor, Gouache, Pastel, Paper</p>
+          </div>
+        </article>
+
+        <article id="mixed-media" class="masonry-item" data-category="mixed-media" tabindex="0">
+          <img src="https://imgbed.698891.xyz/file/logo/maxae/MixedMedia/1778996173874_photo-1604871000636-074fa5117945" alt="Mixed media art" />
+          <div class="item-copy">
+            <span class="item-number">09</span>
+            <h2 data-i18n="items.mixedMedia.title">Mixed Media</h2>
+            <p data-i18n="items.mixedMedia.desc">Collage, Assemblage, Material, Object</p>
+          </div>
+        </article>
+
+      </section>
+    </main>
+
+    <script>
+      const copy = {
+        zh: {
+          title: 'MAX\u00c6.ART // \u5c55\u89c8\u5165\u53e3',
+          nav: {
+            exhibition: '\u5c55\u89c8',
+            about: '\u5173\u4e8e',
+          },
+          page: {
+            title: '\u827a\u672f\u5c55\u89c8',
+            subtitle: '\u9009\u62e9\u4e00\u4e2a\u827a\u672f\u95e8\u7c7b\u5f00\u59cb\u63a2\u7d22',
+          },
+          items: {
+            chinesePainting: { title: '\u4e2d\u56fd\u753b', desc: '\u6c34\u58a8 / \u5de5\u7b14 / \u4eba\u7269 / \u5c71\u6c34' },
+            oilPainting: { title: '\u6cb9\u753b', desc: '\u6cb9\u5f69 / \u4e19\u70ef / \u5177\u8c61 / \u62bd\u8c61' },
+            printmaking: { title: '\u7248\u753b', desc: '\u6728\u523b / \u94dc\u7248 / \u77f3\u7248 / \u4e1d\u7f51' },
+            sculpture: { title: '\u96d5\u5851', desc: '\u77f3\u6750 / \u91d1\u5c5e / \u6728\u6750 / \u9676\u571f' },
+            mural: { title: '\u58c1\u753b', desc: '\u5899\u9762\u7ed8\u753b / \u516c\u5171\u827a\u672f / \u6e7f\u58c1\u753b' },
+            drawing: { title: '\u7d20\u63cf', desc: '\u901f\u5199 / \u70ad\u7b14 / \u77f3\u58a8 / \u58a8' },
+            calligraphy: { title: '\u4e66\u6cd5', desc: '\u4e66\u4f53 / \u7bc6\u523b / \u9898\u8dcb / \u6c34\u58a8' },
+            watercolorPastel: { title: '\u6c34\u5f69\u4e0e\u7c89\u753b', desc: '\u6c34\u5f69 / \u6c34\u7c89 / \u8272\u7c89 / \u7eb8\u672c' },
+            mixedMedia: { title: '\u7efc\u5408\u6750\u6599\u827a\u672f', desc: '\u62fc\u8d34 / \u88c5\u914d / \u6750\u6599 / \u7269\u4ef6' },
+          },
+        },
+        en: {
+          title: 'MAX\u00c6.ART // Exhibition',
+          nav: {
+            exhibition: 'Exhibition',
+            about: 'About',
+          },
+          page: {
+            title: 'Art Exhibition',
+            subtitle: 'Select an art category to explore',
+          },
+          items: {
+            chinesePainting: { title: 'Chinese Painting', desc: 'Ink, Wash, Figure, Landscape' },
+            oilPainting: { title: 'Oil Painting', desc: 'Oil, Acrylic, Figurative, Abstract' },
+            printmaking: { title: 'Printmaking', desc: 'Woodcut, Intaglio, Lithography, Screenprint' },
+            sculpture: { title: 'Sculpture', desc: 'Stone, Metal, Wood, Clay' },
+            mural: { title: 'Mural Painting', desc: 'Wall Painting, Public Art, Fresco' },
+            drawing: { title: 'Drawing', desc: 'Sketch, Charcoal, Graphite, Ink' },
+            calligraphy: { title: 'Calligraphy', desc: 'Script, Seal, Inscription, Ink' },
+            watercolorPastel: { title: 'Watercolor & Pastel', desc: 'Watercolor, Gouache, Pastel, Paper' },
+            mixedMedia: { title: 'Mixed Media', desc: 'Collage, Assemblage, Material, Object' },
+          },
+        },
+      }
+
+      const button = document.querySelector('.language-toggle')
+      const languageKey = 'maxae-lang'
+      const legacyLang = localStorage.getItem('maxae-exhibition-lang')
+      const savedLang = localStorage.getItem(languageKey) || legacyLang
+      let lang = savedLang === 'en' ? 'en' : 'zh'
+
+      const getCopy = (path) =>
+        path.split('.').reduce((value, key) => value?.[key], copy[lang])
+
+      const render = () => {
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en'
+        document.title = copy[lang].title
+        localStorage.setItem(languageKey, lang)
+        document.querySelectorAll('[data-i18n]').forEach((element) => {
+          element.textContent = getCopy(element.dataset.i18n)
+        })
+        button.textContent = lang === 'zh' ? 'EN' : '\u4e2d\u6587'
+        button.setAttribute(
+          'aria-label',
+          lang === 'zh' ? 'Switch to English' : '\u5207\u6362\u5230\u4e2d\u6587',
+        )
+      }
+
+      button.addEventListener('click', () => {
+        lang = lang === 'zh' ? 'en' : 'zh'
+        localStorage.setItem(languageKey, lang)
+        localStorage.removeItem('maxae-exhibition-lang')
+        render()
+      })
+
+      render()
+
+      const params = new URLSearchParams(window.location.search)
+      if (params.get('random') === '1') {
+        const categories = [
+          'chinese-painting',
+          'oil-painting',
+          'printmaking',
+          'sculpture',
+          'mural-painting',
+          'drawing',
+          'calligraphy',
+          'watercolor-pastel',
+          'mixed-media',
+        ]
+        const target = categories[Math.floor(Math.random() * categories.length)]
+        history.replaceState(null, '', `/exhibition.html#${target}`)
+        document.getElementById(target)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        })
+      }
+
+      document.querySelectorAll('[data-category]').forEach((card) => {
+        const openCategory = () => {
+          window.location.href = `/category.html?type=${card.dataset.category}`
+        }
+        card.addEventListener('click', openCategory)
+        card.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            openCategory()
+          }
+        })
+      })
+    </script>
+  </body>
+</html>

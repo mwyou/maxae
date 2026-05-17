@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAX&AElig;.ART // About</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Space+Grotesk:wght@300;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color: #f4f4f5;
+        background: #050505;
+        font-family: 'Space Grotesk', sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scrollbar-width: none;
+      }
+
+      ::-webkit-scrollbar {
+        display: none;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(circle at 18% 16%, rgb(168 85 247 / 0.14), transparent 30rem),
+          radial-gradient(circle at 86% 72%, rgb(234 179 8 / 0.09), transparent 26rem),
+          #050505;
+        color: #f4f4f5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      .site-header {
+        position: fixed;
+        z-index: 50;
+        top: 0;
+        left: 0;
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+        padding: 24px 32px;
+        background: rgb(11 11 11 / 0.48);
+        backdrop-filter: blur(18px) saturate(1.25);
+        -webkit-backdrop-filter: blur(18px) saturate(1.25);
+      }
+
+      .brand,
+      .maxae-logo {
+        display: block;
+        width: 46px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+      }
+
+      .desktop-nav {
+        display: flex;
+        gap: 32px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .desktop-nav a:hover,
+      .desktop-nav .is-active {
+        color: #facc15;
+      }
+
+      .language-toggle {
+        min-width: 48px;
+        border: 1px solid #3f3f46;
+        border-radius: 4px;
+        padding: 4px 12px;
+        color: #fff;
+        background: rgb(24 24 27 / 0.5);
+        backdrop-filter: blur(8px);
+        cursor: pointer;
+        font-size: 12px;
+        letter-spacing: 0.18em;
+        line-height: 1.5;
+        text-transform: uppercase;
+      }
+
+      main {
+        width: min(1120px, 100%);
+        margin: 0 auto;
+        padding: 164px clamp(26px, 6vw, 84px) 120px;
+      }
+
+      .manifesto-hero {
+        display: grid;
+        min-height: calc(100svh - 164px);
+        place-items: center;
+        text-align: center;
+      }
+
+      .quote {
+        max-width: 980px;
+        margin: 0;
+      }
+
+      .quote-cn {
+        display: block;
+        font-family:
+          'Noto Serif SC',
+          'Songti SC',
+          serif;
+        font-size: clamp(30px, 5vw, 72px);
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        line-height: 1.65;
+      }
+
+      .quote-en {
+        display: block;
+        margin-top: 34px;
+        color: #a1a1aa;
+        font-size: clamp(15px, 2vw, 24px);
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        line-height: 1.7;
+      }
+
+      .manifesto-section {
+        display: grid;
+        grid-template-columns: minmax(180px, 0.38fr) minmax(0, 1fr);
+        gap: clamp(34px, 7vw, 92px);
+        padding: clamp(96px, 15vw, 180px) 0;
+        border-top: 1px solid rgb(255 255 255 / 0.08);
+      }
+
+      .section-index {
+        color: #52525b;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.34em;
+        line-height: 1.7;
+        text-transform: uppercase;
+      }
+
+      .section-body {
+        max-width: 760px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(38px, 7vw, 96px);
+        font-weight: 900;
+        letter-spacing: -0.065em;
+        line-height: 0.95;
+        text-transform: uppercase;
+      }
+
+      .section-subtitle {
+        margin: 18px 0 clamp(48px, 8vw, 84px);
+        color: #a1a1aa;
+        font-size: clamp(15px, 2vw, 24px);
+        font-weight: 300;
+        letter-spacing: 0.08em;
+        line-height: 1.6;
+      }
+
+      .copy {
+        display: grid;
+        gap: clamp(30px, 5vw, 54px);
+        color: #d4d4d8;
+        font-family:
+          'Noto Serif SC',
+          'Songti SC',
+          serif;
+        font-size: clamp(17px, 1.8vw, 22px);
+        letter-spacing: 0.06em;
+        line-height: 2.15;
+      }
+
+      .copy p {
+        margin: 0;
+      }
+
+      .contact {
+        display: grid;
+        gap: 10px;
+        padding-top: 64px;
+        border-top: 1px solid rgb(255 255 255 / 0.08);
+        color: #a1a1aa;
+        font-size: 12px;
+        letter-spacing: 0.24em;
+        line-height: 2;
+        text-align: center;
+        text-transform: uppercase;
+      }
+
+      .contact a {
+        color: #facc15;
+      }
+
+      @media (max-width: 767px) {
+        .site-header {
+          padding: 24px;
+        }
+
+        .desktop-nav {
+          display: none;
+        }
+
+        .brand,
+        .maxae-logo {
+          width: 42px;
+        }
+
+        .manifesto-section {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="site-header" aria-label="Primary navigation">
+      <a href="/" class="brand" aria-label="MAXAE.ART home">
+        <img
+          class="maxae-logo"
+          src="https://imgbed.698891.xyz/file/logo/maxae/1778980346239_maxae.png"
+          alt="MAXAE logo"
+          decoding="async"
+        />
+      </a>
+      <div class="header-actions">
+        <div class="desktop-nav">
+          <a href="/exhibition.html" data-i18n="nav.exhibition">Exhibition</a>
+          <a class="is-active" href="/about.html" data-i18n="nav.about">About</a>
+        </div>
+        <button class="language-toggle" type="button" aria-label="Switch to English">EN</button>
+      </div>
+    </nav>
+
+    <main>
+      <section class="manifesto-hero" aria-labelledby="manifesto-title">
+        <blockquote class="quote">
+          <span id="manifesto-title" class="quote-cn" data-i18n="hero.cn"></span>
+          <span class="quote-en" data-i18n="hero.en"></span>
+        </blockquote>
+      </section>
+
+      <section class="manifesto-section">
+        <div class="section-index">01 / The Dichotomy</div>
+        <div class="section-body">
+          <h1 data-i18n="sections.dichotomy.title"></h1>
+          <p class="section-subtitle" data-i18n="sections.dichotomy.subtitle"></p>
+          <div class="copy">
+            <p data-i18n="sections.dichotomy.p1"></p>
+            <p data-i18n="sections.dichotomy.p2"></p>
+            <p data-i18n="sections.dichotomy.p3"></p>
+            <p data-i18n="sections.dichotomy.p4"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="manifesto-section">
+        <div class="section-index">02 / The Stance</div>
+        <div class="section-body">
+          <h1 data-i18n="sections.stance.title"></h1>
+          <p class="section-subtitle" data-i18n="sections.stance.subtitle"></p>
+          <div class="copy">
+            <p data-i18n="sections.stance.p1"></p>
+            <p data-i18n="sections.stance.p2"></p>
+            <p data-i18n="sections.stance.p3"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="manifesto-section">
+        <div class="section-index">03 / The Space</div>
+        <div class="section-body">
+          <h1 data-i18n="sections.space.title"></h1>
+          <p class="section-subtitle" data-i18n="sections.space.subtitle"></p>
+          <div class="copy">
+            <p data-i18n="sections.space.p1"></p>
+          </div>
+        </div>
+      </section>
+
+      <div class="contact">
+        <div data-i18n="contact.label"></div>
+        <a href="mailto:studio@maxae.art">studio@maxae.art</a>
+      </div>
+    </main>
+
+    <script>
+      const copy = {
+        zh: {
+          title: 'MAX\u00c6.ART // \u5173\u4e8e',
+          nav: { exhibition: '\u5c55\u89c8', about: '\u5173\u4e8e' },
+          hero: {
+            cn: '\u201c\u5728\u7edd\u5bf9\u7684\u63a7\u5236\u4e0e\u4f18\u96c5\u7684\u5931\u63a7\u4e4b\u95f4\uff0c\u6211\u4eec\u5bfb\u627e\u827a\u672f\u771f\u5b9e\u7684\u91cd\u529b\u3002\u201d',
+            en: 'Between absolute control and graceful surrender, we seek the true gravity of art.',
+          },
+          sections: {
+            dichotomy: {
+              title: '\u6781\u9650\u4e0e\u67d4\u7f8e',
+              subtitle: 'Maximum Force. Classical Flow.',
+              p1: 'MAX\u00c6 \u5e76\u975e\u4e00\u4e2a\u7b80\u5355\u7684\u7f29\u5199\uff0c\u800c\u662f\u4e00\u79cd\u5173\u4e8e\u7269\u8d28\u4e0e\u7cbe\u795e\u7684\u6781\u7aef\u4e8c\u5143\u8bba\u3002',
+              p2: '\u5728\u8fd9\u91cc\uff0cMAX \u610f\u5473\u7740\u5bf9\u6297\u3001\u529b\u91cf\u4e0e\u7269\u7406\u6781\u9650\u3002\u5b83\u662f\u523b\u5200\u5207\u5f00\u6728\u7eb9\u7684\u51b3\u7edd\uff0c\u662f\u539a\u91cd\u989c\u6599\u7684\u538b\u5f3a\uff0c\u662f\u51ff\u51fb\u91d1\u5c5e\u4e0e\u77f3\u6750\u65f6\u7684\u66b4\u529b\u3002\u5b83\u4ee3\u8868\u7740\u521b\u4f5c\u8005\u4e0e\u575a\u786c\u7269\u8d28\u4e4b\u95f4\uff0c\u6700\u539f\u59cb\u4e14\u5145\u6ee1\u75db\u611f\u7684\u8089\u640f\u3002',
+              p3: '\u800c \u00e6\uff0c\u662f\u91cd\u538b\u4e4b\u4e0b\u7684\u65b0\u751f\u3002\u5f53\u539a\u91cd\u7684\u673a\u5668\u6eda\u8fc7\u3001\u5f53\u950b\u8292\u892a\u53bb\uff0c\u5b83\u662f\u6cb9\u58a8\u5728\u7eb8\u5f20\u7ea4\u7ef4\u91cc\u7684\u81ea\u7136\u547c\u5438\uff0c\u662f\u53e4\u5178\u7ebf\u6761\u7684\u6e38\u8d70\uff0c\u662f\u6c34\u8272\u6655\u67d3\u65f6\u4e0d\u53ef\u9884\u77e5\u7684\u751f\u547d\u529b\u3002',
+              p4: '\u4e00\u534a\u662f\u6467\u6bc1\u822c\u7684\u521a\u731b\uff0c\u4e00\u534a\u662f\u629a\u6170\u822c\u7684\u67d4\u7f8e\u3002\u827a\u672f\uff0c\u5c31\u53d1\u751f\u5728\u8fd9\u4e8c\u8005\u53ae\u6740\u4e0e\u548c\u89e3\u7684\u7f1d\u9699\u4e2d\u3002',
+            },
+            stance: {
+              title: '\u56de\u5f52\u771f\u5b9e\u7684\u7269\u7406\u808c\u7406',
+              subtitle: 'Rejecting digital illusions. Returning to physical textures.',
+              p1: '\u5728\u7b97\u6cd5\u53ef\u4ee5\u77ac\u95f4\u751f\u6210\u5b8c\u7f8e\u56fe\u50cf\u3001\u4e00\u5207\u90fd\u53ef\u4ee5\u88ab\u201c\u64a4\u9500\uff08Ctrl+Z\uff09\u201d\u7684\u65f6\u4ee3\uff0cMAX\u00c6 \u9009\u62e9\u4e86\u4e00\u573a\u5411\u540e\u64a4\u9000\u7684\u53cd\u53db\u3002',
+              p2: '\u6211\u4eec\u4e0d\u5c55\u51fa\u8f7b\u6613\u7684\u4ea7\u7269\u3002\u8fd9\u91cc\u6536\u5f55\u7684\u6240\u6709\u6d41\u6d3e\u2014\u2014\u65e0\u8bba\u662f\u751f\u6da9\u7684\u7248\u753b\u3001\u6df1\u6e0a\u822c\u7684\u6cb9\u753b\u3001\u5265\u843d\u7684\u53e4\u5178\u58c1\u753b\uff0c\u8fd8\u662f\u9759\u9ed8\u7684\u96d5\u5851\u2014\u2014\u90fd\u5fc5\u987b\u5e26\u6709\u4e00\u79cd\u201c\u6c89\u91cd\u611f\u201d\u3002\u5b83\u4eec\u4f34\u968f\u7740\u4e0d\u53ef\u9006\u8f6c\u7684\u5931\u8bef\u3001\u624b\u5de5\u52b3\u4f5c\u7684\u6c57\u6c34\u3001\u4ee5\u53ca\u65f6\u95f4\u51b2\u5237\u7684\u75d5\u8ff9\u3002',
+              p3: '\u6211\u4eec\u4fe1\u4ef0\u90a3\u4e9b\u5e26\u6709\u7f3a\u9677\u7684\u3001\u7c97\u7cd9\u7684\u3001\u751a\u81f3\u6cbe\u67d3\u7740\u7070\u5c18\u7684\u771f\u5b9e\u3002',
+            },
+            space: {
+              title: '\u4e0d\u8bbe\u8fb9\u754c\u7684\u7f8e\u5b66\u9635\u5730',
+              subtitle: 'A boundless aesthetic field.',
+              p1: 'MAX\u00c6 \u81f4\u529b\u4e8e\u6253\u7834\u4f20\u7edf\u753b\u5eca\u7684\u6d41\u6d3e\u58c1\u5792\u3002\u6211\u4eec\u4e0d\u4ee5\u201c\u753b\u79cd\u201d\u6765\u5b9a\u4e49\u827a\u672f\uff0c\u800c\u662f\u4ee5\u201c\u5bf9\u6750\u8d28\u7684\u6b7b\u78d5\u7cbe\u795e\u201d\u6765\u5efa\u7acb\u5750\u6807\u7cfb\u3002\u8fd9\u91cc\u662f\u6240\u6709\u5d07\u5c1a\u7269\u7406\u529b\u91cf\u4e0e\u53e4\u5178\u7f8e\u5b66\u78b0\u649e\u7684\u827a\u672f\u5bb6\u7684\u907f\u96be\u6240\u4e0e\u53d1\u58f0\u573a\u3002',
+            },
+          },
+          contact: { label: '\u54a8\u8be2\u4e0e\u5de5\u4f5c\u5ba4\u8bbf\u95ee' },
+        },
+        en: {
+          title: 'MAX\u00c6.ART // About',
+          nav: { exhibition: 'Exhibition', about: 'About' },
+          hero: {
+            cn: '\u201c\u5728\u7edd\u5bf9\u7684\u63a7\u5236\u4e0e\u4f18\u96c5\u7684\u5931\u63a7\u4e4b\u95f4\uff0c\u6211\u4eec\u5bfb\u627e\u827a\u672f\u771f\u5b9e\u7684\u91cd\u529b\u3002\u201d',
+            en: 'Between absolute control and graceful surrender, we seek the true gravity of art.',
+          },
+          sections: {
+            dichotomy: {
+              title: 'Maximum Force. Classical Flow.',
+              subtitle: '\u6781\u9650\u4e0e\u67d4\u7f8e',
+              p1: 'MAX\u00c6 is not a simple abbreviation, but an extreme dualism of matter and spirit.',
+              p2: 'Here, MAX means resistance, force, and physical limit: the decisiveness of a blade opening wood grain, the pressure of dense pigment, the violence of striking metal and stone.',
+              p3: '\u00e6 is the new life born under pressure. When the heavy machine rolls across the surface, it is ink breathing inside paper fiber, classical line moving through space, and the unpredictable vitality of water and color.',
+              p4: 'One half is destructive force, the other half is consoling softness. Art happens in the narrow space where the two fight and reconcile.',
+            },
+            stance: {
+              title: 'Rejecting Digital Illusions',
+              subtitle: '\u62d2\u7edd\u5b8c\u7f8e\u7684\u6570\u5b57\u5e7b\u8c61\uff0c\u56de\u5f52\u771f\u5b9e\u7684\u7269\u7406\u808c\u7406\u3002',
+              p1: 'In an age when algorithms can instantly generate perfect images and everything can be undone with Ctrl+Z, MAX\u00c6 chooses a backward rebellion.',
+              p2: 'We do not exhibit easy products. Every discipline gathered here, whether raw printmaking, abyssal oil painting, weathered mural, or silent sculpture, must carry a sense of weight: irreversible mistakes, the sweat of handwork, and the marks of time.',
+              p3: 'We believe in the real: flawed, rough, and even dust-covered.',
+            },
+            space: {
+              title: 'A Boundless Aesthetic Field',
+              subtitle: '\u4e0d\u8bbe\u8fb9\u754c\u7684\u7f8e\u5b66\u9635\u5730\u3002',
+              p1: 'MAX\u00c6 works to break the genre walls of the traditional gallery. We do not define art by category alone, but by the spirit of wrestling with material. This is a refuge and a voice-field for artists who believe in the collision of physical force and classical beauty.',
+            },
+          },
+          contact: { label: 'Inquiries & Studio Visits' },
+        },
+      }
+
+      const button = document.querySelector('.language-toggle')
+      const languageKey = 'maxae-lang'
+      let lang = localStorage.getItem(languageKey) === 'en' ? 'en' : 'zh'
+
+      const getCopy = (path) =>
+        path.split('.').reduce((value, key) => value?.[key], copy[lang])
+
+      const render = () => {
+        document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en'
+        document.title = copy[lang].title
+        localStorage.setItem(languageKey, lang)
+        document.querySelectorAll('[data-i18n]').forEach((element) => {
+          element.textContent = getCopy(element.dataset.i18n)
+        })
+        button.textContent = lang === 'zh' ? 'EN' : '\u4e2d\u6587'
+        button.setAttribute(
+          'aria-label',
+          lang === 'zh' ? 'Switch to English' : '\u5207\u6362\u5230\u4e2d\u6587',
+        )
+      }
+
+      button.addEventListener('click', () => {
+        lang = lang === 'zh' ? 'en' : 'zh'
+        render()
+      })
+
+      render()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAXÆ Admin</title>
+    <style>
+      :root {
+        color: #f4f4f5;
+        background: #0a0a0b;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-width: 320px;
+        background:
+          radial-gradient(circle at 18% 8%, rgb(192 132 252 / 0.18), transparent 30rem),
+          radial-gradient(circle at 92% 12%, rgb(250 204 21 / 0.12), transparent 26rem),
+          #0a0a0b;
+      }
+
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
+
+      button {
+        border: 1px solid rgb(255 255 255 / 0.16);
+        border-radius: 6px;
+        padding: 10px 14px;
+        color: #0a0a0b;
+        background: #facc15;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      button.secondary {
+        color: #f4f4f5;
+        background: rgb(255 255 255 / 0.06);
+      }
+
+      button.danger {
+        color: #fff;
+        background: #7f1d1d;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        border: 1px solid rgb(255 255 255 / 0.12);
+        border-radius: 6px;
+        padding: 11px 12px;
+        color: #f4f4f5;
+        background: rgb(255 255 255 / 0.06);
+      }
+
+      textarea {
+        min-height: 92px;
+        resize: vertical;
+      }
+
+      label {
+        display: grid;
+        gap: 8px;
+        color: #a1a1aa;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .shell {
+        width: min(1440px, 100%);
+        margin: 0 auto;
+        padding: 32px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 32px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(34px, 6vw, 72px);
+        letter-spacing: -0.06em;
+        line-height: 0.95;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        font-size: 18px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .muted {
+        color: #71717a;
+      }
+
+      .panel {
+        border: 1px solid rgb(255 255 255 / 0.1);
+        border-radius: 8px;
+        padding: 22px;
+        background: rgb(18 18 20 / 0.82);
+      }
+
+      .login {
+        display: grid;
+        gap: 18px;
+        width: min(460px, calc(100% - 32px));
+        margin: 14vh auto 0;
+      }
+
+      .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .tab {
+        color: #f4f4f5;
+        background: rgb(255 255 255 / 0.06);
+      }
+
+      .tab.is-active {
+        color: #0a0a0b;
+        background: #facc15;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .full {
+        grid-column: 1 / -1;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+        align-items: center;
+        border: 1px solid rgb(255 255 255 / 0.08);
+        border-radius: 7px;
+        padding: 14px;
+        background: rgb(255 255 255 / 0.04);
+      }
+
+      .row strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .row small {
+        color: #71717a;
+      }
+
+      .thumb {
+        width: 72px;
+        height: 54px;
+        object-fit: cover;
+        border-radius: 4px;
+        background: #18181b;
+      }
+
+      .row-main {
+        display: grid;
+        grid-template-columns: 84px minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+      }
+
+      .notice {
+        min-height: 24px;
+        margin-top: 12px;
+        color: #facc15;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 900px) {
+        .shell {
+          padding: 20px;
+        }
+
+        .grid,
+        .form-grid,
+        .row,
+        .row-main {
+          grid-template-columns: 1fr;
+        }
+
+        .thumb {
+          width: 100%;
+          height: 150px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section id="setupView" class="login panel hidden">
+      <h1>Setup</h1>
+      <p class="muted">首次使用：创建后台管理员。D1 数据库 ID 已在 Cloudflare 绑定，不能在页面里修改。</p>
+      <label>
+        Username
+        <input id="setupUsername" autocomplete="username" value="admin" />
+      </label>
+      <label>
+        Password
+        <input id="setupPassword" type="password" autocomplete="new-password" placeholder="至少 8 位" />
+      </label>
+      <button id="setupButton" type="button">创建管理员</button>
+      <p id="setupNotice" class="notice"></p>
+    </section>
+
+    <section id="loginView" class="login panel hidden">
+      <h1>MAXÆ Admin</h1>
+      <p class="muted">管理分类、作品和图床图片地址。</p>
+      <label>
+        Username
+        <input id="loginUsername" autocomplete="username" value="admin" />
+      </label>
+      <label>
+        Password
+        <input id="loginPassword" type="password" autocomplete="current-password" />
+      </label>
+      <button id="loginButton" type="button">登录</button>
+      <p id="loginNotice" class="notice"></p>
+    </section>
+
+    <main id="adminView" class="shell hidden">
+      <header class="topbar">
+        <div>
+          <h1>MAXÆ Admin</h1>
+          <p class="muted">图片使用图床 URL，数据库只保存内容和排序。</p>
+        </div>
+        <button id="logoutButton" class="secondary" type="button">退出</button>
+      </header>
+
+      <div class="tabs">
+        <button class="tab is-active" type="button" data-tab="categories">分类</button>
+        <button class="tab" type="button" data-tab="artworks">作品</button>
+      </div>
+
+      <section id="categoriesPanel" class="grid">
+        <form id="categoryForm" class="panel">
+          <h2>分类信息</h2>
+          <input type="hidden" name="id" />
+          <div class="form-grid">
+            <label>
+              Slug
+              <input name="slug" placeholder="chinese-painting" required />
+            </label>
+            <label>
+              排序
+              <input name="sort_order" type="number" value="0" />
+            </label>
+            <label>
+              中文名
+              <input name="name_zh" required />
+            </label>
+            <label>
+              English Name
+              <input name="name_en" required />
+            </label>
+            <label class="full">
+              封面图床 URL
+              <input name="cover_url" />
+            </label>
+            <label>
+              Accent
+              <input name="accent" value="#c084fc" />
+            </label>
+            <label>
+              上架
+              <select name="is_active">
+                <option value="1">是</option>
+                <option value="0">否</option>
+              </select>
+            </label>
+            <label class="full">
+              中文简介
+              <textarea name="summary_zh"></textarea>
+            </label>
+            <label class="full">
+              English Summary
+              <textarea name="summary_en"></textarea>
+            </label>
+            <label>
+              中文媒介
+              <input name="medium_zh" />
+            </label>
+            <label>
+              English Medium
+              <input name="medium_en" />
+            </label>
+            <label>
+              中文关键词
+              <input name="focus_zh" />
+            </label>
+            <label>
+              English Focus
+              <input name="focus_en" />
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit">保存分类</button>
+            <button id="resetCategory" class="secondary" type="button">新建</button>
+          </div>
+          <p id="categoryNotice" class="notice"></p>
+        </form>
+
+        <section class="panel">
+          <h2>分类列表</h2>
+          <div id="categoryList" class="list"></div>
+        </section>
+      </section>
+
+      <section id="artworksPanel" class="grid hidden">
+        <form id="artworkForm" class="panel">
+          <h2>作品信息</h2>
+          <input type="hidden" name="id" />
+          <div class="form-grid">
+            <label class="full">
+              所属分类
+              <select name="category_id" required></select>
+            </label>
+            <label>
+              中文标题
+              <input name="title_zh" required />
+            </label>
+            <label>
+              English Title
+              <input name="title_en" />
+            </label>
+            <label>
+              中文作者
+              <input name="artist_zh" />
+            </label>
+            <label>
+              English Artist
+              <input name="artist_en" />
+            </label>
+            <label>
+              年份
+              <input name="year_text" placeholder="2026" />
+            </label>
+            <label>
+              尺寸
+              <input name="size_text" placeholder="80 x 120 cm" />
+            </label>
+            <label>
+              中文媒介
+              <input name="medium_zh" />
+            </label>
+            <label>
+              English Medium
+              <input name="medium_en" />
+            </label>
+            <label class="full">
+              作品图床 URL
+              <input name="image_url" required />
+            </label>
+            <label>
+              排序
+              <input name="sort_order" type="number" value="0" />
+            </label>
+            <label>
+              精选
+              <select name="is_featured">
+                <option value="0">否</option>
+                <option value="1">是</option>
+              </select>
+            </label>
+            <label>
+              上架
+              <select name="is_active">
+                <option value="1">是</option>
+                <option value="0">否</option>
+              </select>
+            </label>
+            <label class="full">
+              中文说明
+              <textarea name="description_zh"></textarea>
+            </label>
+            <label class="full">
+              English Description
+              <textarea name="description_en"></textarea>
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit">保存作品</button>
+            <button id="resetArtwork" class="secondary" type="button">新建</button>
+          </div>
+          <p id="artworkNotice" class="notice"></p>
+        </form>
+
+        <section class="panel">
+          <h2>作品列表</h2>
+          <div id="artworkList" class="list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const state = {
+        token: localStorage.getItem('maxae-admin-token') || '',
+        categories: [],
+        artworks: [],
+      }
+
+      const $ = (selector) => document.querySelector(selector)
+      const $$ = (selector) => Array.from(document.querySelectorAll(selector))
+
+      const api = async (url, options = {}) => {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(state.token ? { Authorization: `Bearer ${state.token}` } : {}),
+            ...(options.headers || {}),
+          },
+        })
+        const data = await response.json().catch(() => ({}))
+        if (!response.ok) throw new Error(data.error || 'Request failed')
+        return data
+      }
+
+      const formToObject = (form) =>
+        Object.fromEntries(
+          new FormData(form).entries(),
+        )
+
+      const escapeHtml = (value) =>
+        String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;')
+
+      const fillForm = (form, data) => {
+        Object.entries(data).forEach(([key, value]) => {
+          const field = form.elements[key]
+          if (field) field.value = value ?? ''
+        })
+      }
+
+      const resetForm = (form) => {
+        form.reset()
+        form.elements.id.value = ''
+      }
+
+      const showAdmin = async () => {
+        $('#setupView').classList.add('hidden')
+        $('#loginView').classList.add('hidden')
+        $('#adminView').classList.remove('hidden')
+        await loadAll()
+      }
+
+      const showLogin = () => {
+        $('#setupView').classList.add('hidden')
+        $('#loginView').classList.remove('hidden')
+        $('#adminView').classList.add('hidden')
+      }
+
+      const showSetup = () => {
+        $('#setupView').classList.remove('hidden')
+        $('#loginView').classList.add('hidden')
+        $('#adminView').classList.add('hidden')
+      }
+
+      const loadAll = async () => {
+        state.categories = await api('/api/admin/categories')
+        state.artworks = await api('/api/admin/artworks')
+        renderCategories()
+        renderCategoryOptions()
+        renderArtworks()
+      }
+
+      const renderCategories = () => {
+        $('#categoryList').innerHTML = state.categories
+          .map(
+            (item) => `
+              <article class="row">
+                <div class="row-main">
+                  <img class="thumb" src="${escapeHtml(item.cover_url)}" alt="" />
+                  <div>
+                    <strong>${escapeHtml(item.name_zh)} / ${escapeHtml(item.name_en)}</strong>
+                    <small>${escapeHtml(item.slug)} · sort ${escapeHtml(item.sort_order)} · ${item.is_active ? '上架' : '下架'}</small>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="secondary" type="button" data-edit-category="${item.id}">编辑</button>
+                  <button class="danger" type="button" data-delete-category="${item.id}">删除</button>
+                </div>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      const renderCategoryOptions = () => {
+        const options = state.categories
+          .map((item) => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name_zh)} / ${escapeHtml(item.name_en)}</option>`)
+          .join('')
+        $('#artworkForm select[name="category_id"]').innerHTML = options
+      }
+
+      const renderArtworks = () => {
+        $('#artworkList').innerHTML = state.artworks
+          .map(
+            (item) => `
+              <article class="row">
+                <div class="row-main">
+                  <img class="thumb" src="${escapeHtml(item.image_url)}" alt="" />
+                  <div>
+                    <strong>${escapeHtml(item.title_zh)}${item.title_en ? ` / ${escapeHtml(item.title_en)}` : ''}</strong>
+                    <small>${escapeHtml(item.category_slug)} · sort ${escapeHtml(item.sort_order)} · ${item.is_active ? '上架' : '下架'}</small>
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="secondary" type="button" data-edit-artwork="${item.id}">编辑</button>
+                  <button class="danger" type="button" data-delete-artwork="${item.id}">删除</button>
+                </div>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      $('#loginButton').addEventListener('click', async () => {
+        try {
+          const result = await api('/api/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({
+              username: $('#loginUsername').value,
+              password: $('#loginPassword').value,
+            }),
+          })
+          state.token = result.token
+          localStorage.setItem('maxae-admin-token', state.token)
+          $('#loginNotice').textContent = ''
+          await showAdmin()
+        } catch (error) {
+          $('#loginNotice').textContent = error.message
+        }
+      })
+
+      $('#setupButton').addEventListener('click', async () => {
+        try {
+          await api('/api/setup/init', {
+            method: 'POST',
+            body: JSON.stringify({
+              username: $('#setupUsername').value,
+              password: $('#setupPassword').value,
+            }),
+          })
+          $('#setupNotice').textContent = '管理员已创建，请登录'
+          $('#loginUsername').value = $('#setupUsername').value
+          $('#loginPassword').value = ''
+          showLogin()
+        } catch (error) {
+          $('#setupNotice').textContent = error.message
+        }
+      })
+
+      $('#logoutButton').addEventListener('click', () => {
+        state.token = ''
+        localStorage.removeItem('maxae-admin-token')
+        showLogin()
+      })
+
+      $$('.tab').forEach((button) => {
+        button.addEventListener('click', () => {
+          $$('.tab').forEach((item) => item.classList.remove('is-active'))
+          button.classList.add('is-active')
+          $('#categoriesPanel').classList.toggle('hidden', button.dataset.tab !== 'categories')
+          $('#artworksPanel').classList.toggle('hidden', button.dataset.tab !== 'artworks')
+        })
+      })
+
+      $('#categoryForm').addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const form = event.currentTarget
+        const payload = formToObject(form)
+        const id = payload.id
+        delete payload.id
+
+        try {
+          await api(id ? `/api/admin/categories/${id}` : '/api/admin/categories', {
+            method: id ? 'PUT' : 'POST',
+            body: JSON.stringify(payload),
+          })
+          $('#categoryNotice').textContent = '已保存'
+          resetForm(form)
+          await loadAll()
+        } catch (error) {
+          $('#categoryNotice').textContent = error.message
+        }
+      })
+
+      $('#artworkForm').addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const form = event.currentTarget
+        const payload = formToObject(form)
+        const id = payload.id
+        delete payload.id
+
+        try {
+          await api(id ? `/api/admin/artworks/${id}` : '/api/admin/artworks', {
+            method: id ? 'PUT' : 'POST',
+            body: JSON.stringify(payload),
+          })
+          $('#artworkNotice').textContent = '已保存'
+          resetForm(form)
+          await loadAll()
+        } catch (error) {
+          $('#artworkNotice').textContent = error.message
+        }
+      })
+
+      $('#resetCategory').addEventListener('click', () => resetForm($('#categoryForm')))
+      $('#resetArtwork').addEventListener('click', () => resetForm($('#artworkForm')))
+
+      document.addEventListener('click', async (event) => {
+        const categoryEditId = event.target.dataset.editCategory
+        const categoryDeleteId = event.target.dataset.deleteCategory
+        const artworkEditId = event.target.dataset.editArtwork
+        const artworkDeleteId = event.target.dataset.deleteArtwork
+
+        if (categoryEditId) {
+          const item = state.categories.find((category) => String(category.id) === categoryEditId)
+          if (item) fillForm($('#categoryForm'), item)
+        }
+
+        if (artworkEditId) {
+          const item = state.artworks.find((artwork) => String(artwork.id) === artworkEditId)
+          if (item) fillForm($('#artworkForm'), item)
+        }
+
+        if (categoryDeleteId && confirm('确认删除这个分类？分类下的作品也会删除。')) {
+          await api(`/api/admin/categories/${categoryDeleteId}`, { method: 'DELETE' })
+          await loadAll()
+        }
+
+        if (artworkDeleteId && confirm('确认删除这个作品？')) {
+          await api(`/api/admin/artworks/${artworkDeleteId}`, { method: 'DELETE' })
+          await loadAll()
+        }
+      })
+
+      const boot = async () => {
+        try {
+          const status = await api('/api/setup/status')
+          if (status.needsSetup) {
+            showSetup()
+            return
+          }
+
+          if (state.token) {
+            await showAdmin()
+            return
+          }
+
+          showLogin()
+        } catch (error) {
+          $('#loginNotice').textContent = error.message
+          showLogin()
+        }
+      }
+
+      boot().catch(() => showLogin())
+    </script>
+  </body>
+</html>

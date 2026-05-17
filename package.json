@@ -1,0 +1,23 @@
+{
+  "name": "maxae-vue",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "cf:dev": "npm run build && wrangler dev",
+    "cf:migrate:local": "wrangler d1 migrations apply maxae --local",
+    "cf:migrate:remote": "wrangler d1 migrations apply maxae --remote",
+    "cf:deploy": "npm run build && wrangler deploy",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.1.0",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "wrangler": "^4.92.0"
+  }
+}
