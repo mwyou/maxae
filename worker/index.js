@@ -265,20 +265,56 @@ const appendAdminLog = async (env, request, action, target, detail = {}) => {
   await putJsonKV(env, 'admin:logs', logs.slice(0, 100), { expirationTtl: LOG_TTL })
 }
 
+const getAiConfig = async (env) => ({
+  baseUrl: (await getSetting(env.DB, 'ai_base_url')) || 'https://api.openai.com/v1/chat/completions',
+  model: (await getSetting(env.DB, 'ai_model')) || 'gpt-4o-mini',
+  apiKey: await getSetting(env.DB, 'ai_api_key'),
+  workersAiEnabled:
+    (await getSetting(env.DB, 'enable_workers_ai')) === '1' ||
+    String(env.ENABLE_WORKERS_AI || '').toLowerCase() === 'true',
+})
+
 const translateText = async (env, text, direction) => {
-  if (!env.AI || typeof env.AI.run !== 'function') {
-    throw new Error('Translation service is not configured')
+  const config = await getAiConfig(env)
+
+  if (config.apiKey) {
+    const target = direction === 'en-zh' ? 'Chinese' : 'English'
+    const response = await fetch(config.baseUrl, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${config.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: config.model,
+        temperature: 0.2,
+        messages: [
+          {
+            role: 'system',
+            content: `Translate the user text into ${target}. Return only the translation. Preserve art terms, names, dates, and line breaks.`,
+          },
+          { role: 'user', content: text },
+        ],
+      }),
+    })
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(data.error?.message || 'External translation failed')
+    return String(data.choices?.[0]?.message?.content || '').trim()
   }
 
-  const sourceLang = direction === 'en-zh' ? 'en' : 'zh'
-  const targetLang = direction === 'en-zh' ? 'zh' : 'en'
-  const result = await env.AI.run('@cf/meta/m2m100-1.2b', {
-    text,
-    source_lang: sourceLang,
-    target_lang: targetLang,
-  })
+  if (config.workersAiEnabled && env.AI && typeof env.AI.run === 'function') {
+    const sourceLang = direction === 'en-zh' ? 'en' : 'zh'
+    const targetLang = direction === 'en-zh' ? 'zh' : 'en'
+    const result = await env.AI.run('@cf/meta/m2m100-1.2b', {
+      text,
+      source_lang: sourceLang,
+      target_lang: targetLang,
+    })
 
-  return String(result?.translated_text || result?.translation || '').trim()
+    return String(result?.translated_text || result?.translation || '').trim()
+  }
+
+  throw new Error('Translation service is not configured')
 }
 
 const translateFields = async (env, fields = {}, direction = 'zh-en') => {
@@ -647,6 +683,42 @@ const routeAdminUsers = async (request, env, parts) => {
   return json({ error: 'Not found' }, { status: 404 })
 }
 
+const routeAdminAiConfig = async (request, env) => {
+  if (request.method === 'GET') {
+    const config = await getAiConfig(env)
+    return json({
+      base_url: config.baseUrl,
+      model: config.model,
+      has_api_key: Boolean(config.apiKey),
+      enable_workers_ai: config.workersAiEnabled ? 1 : 0,
+    })
+  }
+
+  if (request.method === 'PUT') {
+    const body = await readJson(request)
+    await setSetting(env.DB, 'ai_base_url', textOrNull(body.base_url) || 'https://api.openai.com/v1/chat/completions')
+    await setSetting(env.DB, 'ai_model', textOrNull(body.model) || 'gpt-4o-mini')
+    await setSetting(env.DB, 'enable_workers_ai', boolToInt(body.enable_workers_ai, 0) ? '1' : '0')
+
+    if (String(body.api_key || '').trim()) {
+      await setSetting(env.DB, 'ai_api_key', String(body.api_key).trim())
+    }
+    if (body.clear_api_key) {
+      await setSetting(env.DB, 'ai_api_key', '')
+    }
+
+    await appendAdminLog(env, request, 'update', 'ai-config', {
+      base_url: textOrNull(body.base_url) || 'https://api.openai.com/v1/chat/completions',
+      model: textOrNull(body.model) || 'gpt-4o-mini',
+      enable_workers_ai: boolToInt(body.enable_workers_ai, 0),
+      api_key_updated: Boolean(String(body.api_key || '').trim() || body.clear_api_key),
+    })
+    return routeAdminAiConfig(new Request(request.url, { method: 'GET' }), env)
+  }
+
+  return json({ error: 'Method not allowed' }, { status: 405 })
+}
+
 const handleApi = async (request, env, apiPath) => {
   try {
     const url = new URL(request.url)
@@ -720,6 +792,7 @@ const handleApi = async (request, env, apiPath) => {
       if (parts[1] === 'logs' && request.method === 'GET') {
         return json(await getJsonKV(env, 'admin:logs', []))
       }
+      if (parts[1] === 'ai-config') return routeAdminAiConfig(request, env)
       if (parts[1] === 'translate' && request.method === 'POST') {
         const body = await readJson(request)
         const direction = body.direction === 'en-zh' ? 'en-zh' : 'zh-en'
@@ -755,6 +828,7 @@ const handleApi = async (request, env, apiPath) => {
       }
       if (parts[1] === 'categories') return routeAdminCategories(request, env, parts)
       if (parts[1] === 'artworks') return routeAdminArtworks(request, env, parts, url)
+      if (parts[1] === 'users') return routeAdminUsers(request, env, parts)
     }
 
     return json({ error: 'Not found' }, { status: 404 })

@@ -697,7 +697,7 @@
         const medium = lang === 'zh'
           ? artwork.medium_zh || artwork.medium_en || ''
           : artwork.medium_en || artwork.medium_zh || ''
-        return [artist, artwork.year_text, medium, artwork.size_text].filter(Boolean).join(' / ')
+        return [artist, artwork.year_text, medium].filter(Boolean).join(' / ')
       }
 
       const renderArtworkWall = () => {

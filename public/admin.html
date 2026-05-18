@@ -180,6 +180,22 @@
         gap: 14px;
       }
 
+      .field-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .mini-button {
+        border-radius: 4px;
+        padding: 4px 8px;
+        color: #f4f4f5;
+        background: rgb(255 255 255 / 0.08);
+        font-size: 11px;
+        letter-spacing: 0.06em;
+      }
+
       .full {
         grid-column: 1 / -1;
       }
@@ -321,6 +337,8 @@
       <div class="tabs">
         <button class="tab is-active" type="button" data-tab="categories">分类</button>
         <button class="tab" type="button" data-tab="artworks">作品</button>
+        <button class="tab" type="button" data-tab="users">管理员</button>
+        <button class="tab" type="button" data-tab="ai">AI 设置</button>
         <button class="tab" type="button" data-tab="logs">操作日志</button>
       </div>
 
@@ -338,11 +356,17 @@
               <input name="sort_order" type="number" value="0" />
             </label>
             <label>
-              中文名
+              <span class="field-head">
+                中文名
+                <button class="mini-button" type="button" data-translate-field="name_zh:name_en:zh-en">译英</button>
+              </span>
               <input name="name_zh" required />
             </label>
             <label>
-              English Name
+              <span class="field-head">
+                English Name
+                <button class="mini-button" type="button" data-translate-field="name_en:name_zh:en-zh">译中</button>
+              </span>
               <input name="name_en" required />
             </label>
             <label class="full">
@@ -361,35 +385,51 @@
               </select>
             </label>
             <label class="full">
-              中文简介
+              <span class="field-head">
+                中文简介
+                <button class="mini-button" type="button" data-translate-field="summary_zh:summary_en:zh-en">译英</button>
+              </span>
               <textarea name="summary_zh"></textarea>
             </label>
             <label class="full">
-              English Summary
+              <span class="field-head">
+                English Summary
+                <button class="mini-button" type="button" data-translate-field="summary_en:summary_zh:en-zh">译中</button>
+              </span>
               <textarea name="summary_en"></textarea>
             </label>
             <label>
-              中文媒介
+              <span class="field-head">
+                材料 / 技法
+                <button class="mini-button" type="button" data-translate-field="medium_zh:medium_en:zh-en">译英</button>
+              </span>
               <input name="medium_zh" />
             </label>
             <label>
-              English Medium
+              <span class="field-head">
+                Material / Technique
+                <button class="mini-button" type="button" data-translate-field="medium_en:medium_zh:en-zh">译中</button>
+              </span>
               <input name="medium_en" />
             </label>
             <label>
-              中文关键词
+              <span class="field-head">
+                中文关键词
+                <button class="mini-button" type="button" data-translate-field="focus_zh:focus_en:zh-en">译英</button>
+              </span>
               <input name="focus_zh" />
             </label>
             <label>
-              English Focus
+              <span class="field-head">
+                English Focus
+                <button class="mini-button" type="button" data-translate-field="focus_en:focus_zh:en-zh">译中</button>
+              </span>
               <input name="focus_en" />
             </label>
           </div>
           <div class="actions">
             <button type="submit">保存分类</button>
-            <button id="translateCategoryToEn" class="secondary" type="button">中文译英文</button>
-            <button id="translateCategoryToZh" class="secondary" type="button">英文译中文</button>
-            <button id="resetCategory" class="secondary" type="button">新建</button>
+            <button id="resetCategory" class="secondary" type="button">清空表单</button>
           </div>
           <p id="categoryNotice" class="notice"></p>
         </form>
@@ -410,19 +450,31 @@
               <select name="category_id" required></select>
             </label>
             <label>
-              中文标题
+              <span class="field-head">
+                中文标题
+                <button class="mini-button" type="button" data-translate-field="title_zh:title_en:zh-en">译英</button>
+              </span>
               <input name="title_zh" required />
             </label>
             <label>
-              English Title
+              <span class="field-head">
+                English Title
+                <button class="mini-button" type="button" data-translate-field="title_en:title_zh:en-zh">译中</button>
+              </span>
               <input name="title_en" />
             </label>
             <label>
-              中文作者
+              <span class="field-head">
+                中文作者
+                <button class="mini-button" type="button" data-translate-field="artist_zh:artist_en:zh-en">译英</button>
+              </span>
               <input name="artist_zh" />
             </label>
             <label>
-              English Artist
+              <span class="field-head">
+                English Artist
+                <button class="mini-button" type="button" data-translate-field="artist_en:artist_zh:en-zh">译中</button>
+              </span>
               <input name="artist_en" />
             </label>
             <label>
@@ -430,15 +482,17 @@
               <input name="year_text" placeholder="2026" />
             </label>
             <label>
-              尺寸
-              <input name="size_text" placeholder="80 x 120 cm" />
-            </label>
-            <label>
-              中文媒介
+              <span class="field-head">
+                材料 / 技法
+                <button class="mini-button" type="button" data-translate-field="medium_zh:medium_en:zh-en">译英</button>
+              </span>
               <input name="medium_zh" />
             </label>
             <label>
-              English Medium
+              <span class="field-head">
+                Material / Technique
+                <button class="mini-button" type="button" data-translate-field="medium_en:medium_zh:en-zh">译中</button>
+              </span>
               <input name="medium_en" />
             </label>
             <label class="full">
@@ -464,22 +518,26 @@
               </select>
             </label>
             <label class="full">
-              中文说明
+              <span class="field-head">
+                中文说明
+                <button class="mini-button" type="button" data-translate-field="description_zh:description_en:zh-en">译英</button>
+              </span>
               <textarea name="description_zh"></textarea>
             </label>
             <label class="full">
-              English Description
+              <span class="field-head">
+                English Description
+                <button class="mini-button" type="button" data-translate-field="description_en:description_zh:en-zh">译中</button>
+              </span>
               <textarea name="description_en"></textarea>
             </label>
           </div>
           <div class="actions">
             <button type="submit">保存作品</button>
-            <button id="translateArtworkToEn" class="secondary" type="button">中文译英文</button>
-            <button id="translateArtworkToZh" class="secondary" type="button">英文译中文</button>
             <button id="saveArtworkDraft" class="secondary" type="button">保存草稿</button>
             <button id="loadArtworkDraft" class="secondary" type="button">恢复草稿</button>
             <button id="clearArtworkDraft" class="secondary" type="button">清除草稿</button>
-            <button id="resetArtwork" class="secondary" type="button">新建</button>
+            <button id="resetArtwork" class="secondary" type="button">清空表单</button>
           </div>
           <p id="artworkNotice" class="notice"></p>
         </form>
@@ -494,6 +552,76 @@
         <h2>操作日志</h2>
         <div id="logList" class="log-list"></div>
       </section>
+
+      <section id="usersPanel" class="grid hidden">
+        <form id="userForm" class="panel">
+          <h2>管理员账户</h2>
+          <input type="hidden" name="id" />
+          <div class="form-grid">
+            <label>
+              Username
+              <input name="username" required />
+            </label>
+            <label>
+              Password
+              <input name="password" type="password" autocomplete="new-password" placeholder="新增必填，编辑可留空" />
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit">保存管理员</button>
+            <button id="resetUser" class="secondary" type="button">清空表单</button>
+          </div>
+          <p id="userNotice" class="notice"></p>
+        </form>
+
+        <section class="panel">
+          <h2>管理员列表</h2>
+          <div id="userList" class="list"></div>
+        </section>
+      </section>
+
+      <section id="aiPanel" class="grid hidden">
+        <form id="aiForm" class="panel">
+          <h2>AI 翻译配置</h2>
+          <div class="form-grid">
+            <label class="full">
+              API Base URL
+              <input name="base_url" placeholder="https://your-newapi.example.com/v1/chat/completions" />
+            </label>
+            <label>
+              Model
+              <input name="model" placeholder="gpt-4o-mini" />
+            </label>
+            <label>
+              API Key
+              <input name="api_key" type="password" autocomplete="new-password" placeholder="留空则不修改" />
+            </label>
+            <label>
+              Workers AI
+              <select name="enable_workers_ai">
+                <option value="0">关闭</option>
+                <option value="1">开启</option>
+              </select>
+            </label>
+            <label>
+              清除外部 API Key
+              <select name="clear_api_key">
+                <option value="0">否</option>
+                <option value="1">是</option>
+              </select>
+            </label>
+          </div>
+          <div class="actions">
+            <button type="submit">保存 AI 设置</button>
+          </div>
+          <p id="aiNotice" class="notice"></p>
+        </form>
+
+        <section class="panel">
+          <h2>当前状态</h2>
+          <p id="aiStatus" class="muted"></p>
+        </section>
+      </section>
     </main>
 
     <script>
@@ -501,6 +629,8 @@
         token: localStorage.getItem('maxae-admin-token') || '',
         categories: [],
         artworks: [],
+        users: [],
+        aiConfig: null,
         logs: [],
       }
 
@@ -546,23 +676,13 @@
         form.elements.id.value = ''
       }
 
-      const translateForm = async (form, pairs, direction, noticeElement) => {
-        const sourceKey = direction === 'zh-en' ? 'zh' : 'en'
-        const targetKey = direction === 'zh-en' ? 'en' : 'zh'
-        const fields = {}
-        const targetBySource = {}
+      const translateSingleField = async (button) => {
+        const [sourceName, targetName, direction] = button.dataset.translateField.split(':')
+        const form = button.closest('form')
+        const noticeElement = form.id === 'categoryForm' ? $('#categoryNotice') : $('#artworkNotice')
+        const value = form.elements[sourceName]?.value?.trim()
 
-        pairs.forEach(([zhName, enName]) => {
-          const sourceName = sourceKey === 'zh' ? zhName : enName
-          const targetName = targetKey === 'zh' ? zhName : enName
-          const value = form.elements[sourceName]?.value?.trim()
-          if (value) {
-            fields[sourceName] = value
-            targetBySource[sourceName] = targetName
-          }
-        })
-
-        if (!Object.keys(fields).length) {
+        if (!value) {
           noticeElement.textContent = '没有可翻译的内容'
           return
         }
@@ -570,15 +690,10 @@
         noticeElement.textContent = '正在翻译...'
         const result = await api('/api/admin/translate', {
           method: 'POST',
-          body: JSON.stringify({ direction, fields }),
+          body: JSON.stringify({ direction, fields: { [sourceName]: value } }),
         })
 
-        Object.entries(result.translations || {}).forEach(([sourceName, value]) => {
-          const targetName = targetBySource[sourceName]
-          if (targetName && form.elements[targetName]) {
-            form.elements[targetName].value = value || ''
-          }
-        })
+        form.elements[targetName].value = result.translations?.[sourceName] || ''
         noticeElement.textContent = '翻译已填入'
       }
 
@@ -604,10 +719,14 @@
       const loadAll = async () => {
         state.categories = await api('/api/admin/categories')
         state.artworks = await api('/api/admin/artworks')
+        state.users = await api('/api/admin/users')
+        state.aiConfig = await api('/api/admin/ai-config')
         state.logs = await api('/api/admin/logs').catch(() => [])
         renderCategories()
         renderCategoryOptions()
         renderArtworks()
+        renderUsers()
+        renderAiConfig()
         renderLogs()
       }
 
@@ -677,6 +796,37 @@
           : '<p class="muted">暂无日志</p>'
       }
 
+      const renderUsers = () => {
+        $('#userList').innerHTML = state.users
+          .map(
+            (item) => `
+              <article class="row">
+                <div>
+                  <strong>${escapeHtml(item.username)}</strong>
+                  <small>${escapeHtml(item.created_at)} · updated ${escapeHtml(item.updated_at)}</small>
+                </div>
+                <div class="actions">
+                  <button class="secondary" type="button" data-edit-user="${item.id}">编辑</button>
+                  <button class="danger" type="button" data-delete-user="${item.id}">删除</button>
+                </div>
+              </article>
+            `,
+          )
+          .join('')
+      }
+
+      const renderAiConfig = () => {
+        if (!state.aiConfig) return
+        fillForm($('#aiForm'), {
+          base_url: state.aiConfig.base_url,
+          model: state.aiConfig.model,
+          api_key: '',
+          enable_workers_ai: state.aiConfig.enable_workers_ai,
+          clear_api_key: '0',
+        })
+        $('#aiStatus').textContent = `外部 API Key：${state.aiConfig.has_api_key ? '已配置' : '未配置'}；Workers AI：${state.aiConfig.enable_workers_ai ? '开启' : '关闭'}`
+      }
+
       $('#loginButton').addEventListener('click', async () => {
         try {
           const result = await api('/api/auth/login', {
@@ -725,6 +875,8 @@
           button.classList.add('is-active')
           $('#categoriesPanel').classList.toggle('hidden', button.dataset.tab !== 'categories')
           $('#artworksPanel').classList.toggle('hidden', button.dataset.tab !== 'artworks')
+          $('#usersPanel').classList.toggle('hidden', button.dataset.tab !== 'users')
+          $('#aiPanel').classList.toggle('hidden', button.dataset.tab !== 'ai')
           $('#logsPanel').classList.toggle('hidden', button.dataset.tab !== 'logs')
         })
       })
@@ -769,53 +921,58 @@
         }
       })
 
+      $('#userForm').addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const form = event.currentTarget
+        const payload = formToObject(form)
+        const id = payload.id
+        delete payload.id
+
+        try {
+          await api(id ? `/api/admin/users/${id}` : '/api/admin/users', {
+            method: id ? 'PUT' : 'POST',
+            body: JSON.stringify(payload),
+          })
+          $('#userNotice').textContent = '已保存'
+          resetForm(form)
+          await loadAll()
+        } catch (error) {
+          $('#userNotice').textContent = error.message
+        }
+      })
+
+      $('#aiForm').addEventListener('submit', async (event) => {
+        event.preventDefault()
+        const payload = formToObject(event.currentTarget)
+        payload.clear_api_key = payload.clear_api_key === '1'
+
+        try {
+          state.aiConfig = await api('/api/admin/ai-config', {
+            method: 'PUT',
+            body: JSON.stringify(payload),
+          })
+          $('#aiNotice').textContent = 'AI 设置已保存'
+          renderAiConfig()
+          state.logs = await api('/api/admin/logs').catch(() => state.logs)
+          renderLogs()
+        } catch (error) {
+          $('#aiNotice').textContent = error.message
+        }
+      })
+
       $('#resetCategory').addEventListener('click', () => resetForm($('#categoryForm')))
       $('#resetArtwork').addEventListener('click', () => resetForm($('#artworkForm')))
+      $('#resetUser').addEventListener('click', () => resetForm($('#userForm')))
 
-      const categoryTranslationPairs = [
-        ['name_zh', 'name_en'],
-        ['summary_zh', 'summary_en'],
-        ['medium_zh', 'medium_en'],
-        ['focus_zh', 'focus_en'],
-      ]
-
-      const artworkTranslationPairs = [
-        ['title_zh', 'title_en'],
-        ['artist_zh', 'artist_en'],
-        ['medium_zh', 'medium_en'],
-        ['description_zh', 'description_en'],
-      ]
-
-      $('#translateCategoryToEn').addEventListener('click', async () => {
-        try {
-          await translateForm($('#categoryForm'), categoryTranslationPairs, 'zh-en', $('#categoryNotice'))
-        } catch (error) {
-          $('#categoryNotice').textContent = error.message
-        }
-      })
-
-      $('#translateCategoryToZh').addEventListener('click', async () => {
-        try {
-          await translateForm($('#categoryForm'), categoryTranslationPairs, 'en-zh', $('#categoryNotice'))
-        } catch (error) {
-          $('#categoryNotice').textContent = error.message
-        }
-      })
-
-      $('#translateArtworkToEn').addEventListener('click', async () => {
-        try {
-          await translateForm($('#artworkForm'), artworkTranslationPairs, 'zh-en', $('#artworkNotice'))
-        } catch (error) {
-          $('#artworkNotice').textContent = error.message
-        }
-      })
-
-      $('#translateArtworkToZh').addEventListener('click', async () => {
-        try {
-          await translateForm($('#artworkForm'), artworkTranslationPairs, 'en-zh', $('#artworkNotice'))
-        } catch (error) {
-          $('#artworkNotice').textContent = error.message
-        }
+      document.querySelectorAll('[data-translate-field]').forEach((button) => {
+        button.addEventListener('click', async () => {
+          try {
+            await translateSingleField(button)
+          } catch (error) {
+            const notice = button.closest('form').id === 'categoryForm' ? $('#categoryNotice') : $('#artworkNotice')
+            notice.textContent = error.message
+          }
+        })
       })
 
       $('#saveArtworkDraft').addEventListener('click', async () => {
@@ -862,6 +1019,8 @@
         const categoryDeleteId = event.target.dataset.deleteCategory
         const artworkEditId = event.target.dataset.editArtwork
         const artworkDeleteId = event.target.dataset.deleteArtwork
+        const userEditId = event.target.dataset.editUser
+        const userDeleteId = event.target.dataset.deleteUser
 
         if (categoryEditId) {
           const item = state.categories.find((category) => String(category.id) === categoryEditId)
@@ -873,6 +1032,13 @@
           if (item) fillForm($('#artworkForm'), item)
         }
 
+        if (userEditId) {
+          const item = state.users.find((user) => String(user.id) === userEditId)
+          if (item) {
+            fillForm($('#userForm'), { ...item, password: '' })
+          }
+        }
+
         if (categoryDeleteId && confirm('确认删除这个分类？分类下的作品也会删除。')) {
           await api(`/api/admin/categories/${categoryDeleteId}`, { method: 'DELETE' })
           await loadAll()
@@ -880,6 +1046,11 @@
 
         if (artworkDeleteId && confirm('确认删除这个作品？')) {
           await api(`/api/admin/artworks/${artworkDeleteId}`, { method: 'DELETE' })
+          await loadAll()
+        }
+
+        if (userDeleteId && confirm('确认删除这个管理员？')) {
+          await api(`/api/admin/users/${userDeleteId}`, { method: 'DELETE' })
           await loadAll()
         }
       })
